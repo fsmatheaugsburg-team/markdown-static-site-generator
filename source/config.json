@@ -1,0 +1,36 @@
+{
+  "routes": {
+    "/sec/": {
+      "title": "KoMa 84 Secure - %s",
+      "use": "secure/",
+      "protection": {
+        "password": "testpwd"
+      }
+    },
+    "/": {
+      "use": ""
+    },
+    "/blog/": {
+      "use": "blog/",
+      "title": "KoMa 84 Blog - %s",
+      "css": "blog.css",
+      "plugin": {
+        "name": "bloglike",
+        "title": "KoMa Blog entries",
+        "previewlen": 150,
+        "layout": "</p><a href='{{url}}'><article class='blog-overview'><h1>{{title}}</h1><p>{{preview}}</p><span class='preview-footer'>{{date}}</span></article></a>"
+      }
+    }
+  },
+  "title": "KoMa 84 - %s",
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "layout": "layout.html",
+  "formatting": {
+    "date": "d.m.Y",
+    "time": "H:i",
+    "datetime": "d.m.Y - H:i"
+  }
+}
