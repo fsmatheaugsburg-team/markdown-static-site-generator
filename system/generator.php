@@ -177,9 +177,10 @@ function build() {
       symlink(in_source_folder('public'), $_SERVER['DOCUMENT_ROOT'] . '/public');
     }
 
-    // link the base css file
-    if (file_exists(in_source_folder('css/base.css'))) {
-      symlink(in_source_folder('css/base.css'), $_SERVER['DOCUMENT_ROOT'] . '/css/base.css');
+    // link the css files
+    foreach (glob(in_source_folder('css/') . '*.{css}', GLOB_BRACE) as $file) {
+      custom_log("linking css " . $file);
+      symlink($file, $_SERVER['DOCUMENT_ROOT'] . '/css/' . basename($file));
     }
   } catch (Exception | Error $e) {
     custom_log("Caught error: " . $e->getMessage());

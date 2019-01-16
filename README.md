@@ -54,14 +54,14 @@ then run
 
 ```
 sudo docker run -it -p 8000:80 \
--v $(pwd)/source:/var/www/html/source \
--v $(pwd)/system:/var/www/html/system mssg "/root/start-script.sh"
+-v /path/to/your/source:/var/www/html/source \
+-v /path/to/your/system:/var/www/html/system mssg "/root/start-script.sh"
 ```
 
 to
  - bind port 80  from the container to port 8000 on your machine
  - link your `source` folder to the `source` folder in the container
- - do the same thing for the `system` and `css` folder
+ - do the same thing for the `system` folder
  - run the startup script (which will drop a bash shell)
 
 

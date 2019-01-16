@@ -24,9 +24,9 @@ function complete_doc($body, $title, $layout, $headers = "") {
     <head>
       <meta charset="utf-8">
       <title>'.$title.'</title>
-      <link rel="stylesheet" href="/css/base.css"/>
-      <link rel="stylesheet" href="/css/current_theme.php"/>
 '.$headers.'
+<link rel="stylesheet" href="/css/base.css"/>
+<link rel="stylesheet" href="/css/current_theme.php"/>
     </head>
     <body>
 '.$layout_filled.'
