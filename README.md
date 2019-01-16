@@ -1,5 +1,7 @@
 # Markdown static site generator
 
+This is only the page generator code, the webpage is defined in another repository.
+
 ## Creating a hello world page
 
 To create a bare-minimum static page, follow these steps:
