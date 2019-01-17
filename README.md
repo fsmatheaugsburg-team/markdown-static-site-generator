@@ -7,6 +7,7 @@ This is only the page generator code, the webpage is defined in another reposito
 To create a bare-minimum static page, follow these steps:
 
 create your `config.json`:
+
 ```
 {
   "routes": {
@@ -25,9 +26,7 @@ your `index.md`:
 # hello world
 ```
 
-Then visit upload your stuff / start the docker container and visit `yoururl.com/system` and press build
-
-
+Then upload your stuff / start the docker container and visit `yoururl.com/system` and press build
 
 
 ## `config.json` format
