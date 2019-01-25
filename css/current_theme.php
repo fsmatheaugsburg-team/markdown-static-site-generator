@@ -2,7 +2,7 @@
 
 function assert_theme_name($theme) {
   if (preg_match('/^[A-z0-9_\\-]{1,20}$/', $theme) != 1 || !file_exists($_SERVER['DOCUMENT_ROOT'] . '/source/css/' . $theme . '.css')) {
-    die("Invalid theme specified");
+    die("Invalid theme specified: $theme");
   }
 }
 
@@ -27,6 +27,7 @@ if (isset($_GET['theme'])) {
   load_theme($_COOKIE["theme"]);
 } else {
   require_once('../system/config.php');
+  if (!isset($CONFIG['themes'])) return;
   $theme = $CONFIG['themes'][0];
   set_theme($theme);
   load_theme($theme);

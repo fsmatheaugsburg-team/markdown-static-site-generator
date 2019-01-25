@@ -55,6 +55,7 @@ function create_for_path($target_path, $cfg) {
   // get plugin
   $plugin = [];
   if (isset($cfg['plugin'])) {
+    $cfg['plugin']['..'] = $cfg;
     if (isset($PLUGINS[$cfg['plugin']['name']]))  {
       $plugin = $PLUGINS[$cfg['plugin']['name']];
     } else {
@@ -71,6 +72,8 @@ function create_for_path($target_path, $cfg) {
   foreach ($files as $file) {
     // ignore non markdown files
     if (preg_match('/\\.md$/', $file) != 1) continue;
+    // ignore README.md
+    if ($file == 'README.md') continue;
 
     // get file contents (markdown)
     $raw_content = file_get_contents($folder . $file);
@@ -163,6 +166,28 @@ function extract_metadata($raw_content, &$metadata) {
   return $raw_content;
 }
 
+// links /source/$name to /$name
+// it checks if the files exists in the source folder, but it is up to you to
+// cover any other checks
+// if $absolute == true, assume $name is an absolute path
+function link_from_source($name, $absolute = false) {
+  $basepath = in_source_folder('');
+  if ($absolute) {
+    if (substr($name, 0, strlen($basepath)) != $basepath) {
+      throw new Exception("Can't link from source if path is not in source! (given: $name, not in: $basepath) [\$absolute=true]");
+    }
+  }
+  // determine source and target (source absolute, target relative to the web root)
+  $path = $absolute ? $name : in_source_folder($name);
+  $target = $absolute ? substr($name, strlen($basepath)) : $name;
+
+  custom_log("linking $path");
+
+  if (file_exists($path)) {
+    return symlink($path, $_SERVER['DOCUMENT_ROOT'] . $target);
+  }
+}
+
 // build entire project
 function build() {
   global $CONFIG;
@@ -172,14 +197,14 @@ function build() {
       create_for_path($target_path, $cfg);
     }
 
-    // link th public folder to the source, as we don't want to duplicate potentially larger files
-    if (file_exists(in_source_folder('public'))) {
-      symlink(in_source_folder('public'), $_SERVER['DOCUMENT_ROOT'] . '/public');
-    }
+    // link the public folder to the source, as we don't want to duplicate potentially larger files
+    link_from_source('public');
+    // link favicon
+    link_from_source('favicon.ico');
 
     // link the css files
     foreach (glob(in_source_folder('css/') . '*.{css}', GLOB_BRACE) as $file) {
-      custom_log("linking css " . $file);
+      link_from_source($file, true);
       symlink($file, $_SERVER['DOCUMENT_ROOT'] . '/css/' . basename($file));
     }
   } catch (Exception | Error $e) {

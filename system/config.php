@@ -26,7 +26,7 @@ if (!isset($CONFIG['layout'])) {
   $CONFIG['layout'] = 'layout.html';
 }
 if (!isset($CONFIG['title'])) {
-  $CONFIG['layout'] = '%s';
+  $CONFIG['title'] = '%s';
 }
 if (isset($CONFIG['headers'])) {
   if (!is_array($CONFIG['headers'])) $CONFIG['headers'] = [$CONFIG['headers']];

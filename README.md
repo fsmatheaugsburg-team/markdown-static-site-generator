@@ -32,7 +32,7 @@ Then upload your stuff / start the docker container and visit `yoururl.com/syste
 ## `config.json` format
 
  - `routes` define all your routes, keys are absolute paths (on the target blog), settings are:
-  - `use: "/path"` the folder containing the markdown files (relative to the `/source` directory). Default is the target path (this objects key)
+  - `use: "/path"` the folder containing the markdown files (relative to the `/source` directory). Default is the target path (this objects key). All markdown files in this directory will be rendered to HTML and made public (except `README.md`).
   - `title: "title with %s placeholder"` template for the page titles, `%s` is replaced with the documents title
   - `css: "/path/to/css" | [paths]` additional css files to be included (either a string, or array of strings). Paths are relative to the css directory `/css`
   - `layout: "layout.html"` Use a special template for this route. Relative to the `/source` directory
@@ -40,7 +40,6 @@ Then upload your stuff / start the docker container and visit `yoururl.com/syste
  - `layout: "layout.html"`
  - `title: "template string %s"` specify a global title template  (gets overwritten by route-specific configurations)
  - `themes: ["theme1", "theme2", ...]` list of theme names
-
 
 
 # Docker
@@ -70,6 +69,7 @@ to
 
  - different layouts for different routes / page
  - no passwords
+ - global / local blacklist for files (i.e. don't render `README.md` for specific folders);
 
 
 ## Plugins
