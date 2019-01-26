@@ -1,6 +1,7 @@
 <?php
 
 require_once('config.php');
+require_once('auth.php');
 require_once('complete_doc.php');
 require_once('date_time.php');
 require_once('plugins.php');
@@ -63,6 +64,7 @@ function create_for_path($target_path, $cfg) {
     }
   }
 
+  custom_log("\n## Rendering contents of $cfg[use]");
 
   $rendered_pages = [];
 
@@ -72,23 +74,19 @@ function create_for_path($target_path, $cfg) {
   foreach ($files as $file) {
     // ignore non markdown files
     if (preg_match('/\\.md$/', $file) != 1) continue;
-    // ignore README.md
-    if ($file == 'README.md') continue;
 
     // get file contents (markdown)
     $raw_content = file_get_contents($folder . $file);
 
-    custom_log("$file");
-    custom_log("body len b4: " . strlen($raw_content));
+    custom_log("\n### $file");
 
     // remove metadata from file and save in array $metadata
     $raw_content = extract_metadata($raw_content, $metadata);
 
-    custom_log("metadata: ".json_encode($metadata, JSON_PRETTY_PRINT));
+    custom_log("metadata: `" . json_encode($metadata) . '`');
 
     // extract title from metadata (or raw content, if no title is set in metadata)
     $title = create_title($cfg['title'], extract_title($metadata, $raw_content));
-    custom_log("body len no meta: " . strlen($raw_content));
 
     // apply plugin, if available
     if (isset($plugin['before_parse'])) {
@@ -97,8 +95,6 @@ function create_for_path($target_path, $cfg) {
 
     // parse markdown
     $content_body = $Parsedown->text($raw_content);
-
-    custom_log("body len after: " . strlen($content_body));
 
     // assemble html file
     $content = complete_doc($content_body, $title, $layout, $headers);
@@ -181,10 +177,10 @@ function link_from_source($name, $absolute = false) {
   $path = $absolute ? $name : in_source_folder($name);
   $target = $absolute ? substr($name, strlen($basepath)) : $name;
 
-  custom_log("linking $path");
+  custom_log("linking $path => $target");
 
   if (file_exists($path)) {
-    return symlink($path, $_SERVER['DOCUMENT_ROOT'] . $target);
+    return symlink($path, $_SERVER['DOCUMENT_ROOT'] . '/'. $target);
   }
 }
 
@@ -193,9 +189,12 @@ function build() {
   global $CONFIG;
 
   try {
+    custom_log("# Rendering:");
     foreach ($CONFIG['routes'] as $target_path => $cfg) {
       create_for_path($target_path, $cfg);
     }
+
+    custom_log("\n# Linking resources:");
 
     // link the public folder to the source, as we don't want to duplicate potentially larger files
     link_from_source('public');
@@ -207,8 +206,11 @@ function build() {
       link_from_source($file, true);
       symlink($file, $_SERVER['DOCUMENT_ROOT'] . '/css/' . basename($file));
     }
+
+    custom_log("\n# Config: \n\n````");
+    custom_log(json_encode($CONFIG, JSON_PRETTY_PRINT) . "\n````");
   } catch (Exception | Error $e) {
-    custom_log("Caught error: " . $e->getMessage());
+    custom_log("# Caught error: " . $e->getMessage());
   }
 
 }
@@ -221,8 +223,10 @@ function custom_log($msg) {
   echo $msg . "\n";
 }
 
-if (isset($_GET['build'])) build();
+if (isset($_GET['build'])) {
+  if (!session_is_authorized()) die("# Error: You are not authorized!");
+  build();
+}
 
-custom_log(json_encode($CONFIG, JSON_PRETTY_PRINT));
 
 ?>

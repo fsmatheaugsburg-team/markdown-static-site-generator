@@ -1,8 +1,15 @@
-<?php
+<?php error_reporting(E_ERROR | E_PARSE);
 
-$CONFIG = json_decode(file_get_contents("../source/config.json"), true);
+if (file_exists("../source/config.json")) {
+  $CONFIG = json_decode(file_get_contents("../source/config.json"), true);
+  if ($CONFIG == null) throw new Error("Invalid JSON config! " + json_last_error_msg());
+} else {
+  define('NO_CONFIG', true);
+  $CONFIG = [
+    "routes" => []
+  ];
+}
 
-if ($CONFIG == null) throw new Error("Invalid JSON config! " + json_last_error_msg());
 
 if (!isset($CONFIG['formatting'])) {
   $CONFIG['formatting'] = [

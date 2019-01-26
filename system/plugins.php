@@ -8,7 +8,11 @@ $PLUGINS = [
       if (!isset($config['previewlen'])) $config['previewlen'] = 200;
       if (!isset($config['title'])) $config['title'] = 'Blog entries';
 
-      $markdown = "# " . $config['title'] . "\n";
+      if ($config['title'] != null) {
+        $markdown = "# " . $config['title'] . "\n";
+      } else {
+        $markdown = "";
+      }
 
       $article_layout = isset($config['layout']) ? $config['layout'] : "## {{title}}\n*Writtenn on the {{date}}*\n\n{{preview}} [more]({{url}})";
 
@@ -36,8 +40,10 @@ $PLUGINS = [
         $index++;
       }
 
-      // TODO figure out sorting
-      //usort($articles, "date");
+      // sort by date
+      usort($articles, function ($a, $b) {
+          return $b['date'] - $a['date'];
+      });
 
       foreach($articles as $page) {
         $markdown .= $page['content'];
@@ -60,7 +66,7 @@ $PLUGINS = [
               this['*'].forEach(node => node.style.display = 'none');
               this[tag].forEach(node => node.style.display = '');
               if (tag == '*') {
-                document.getElementById('tag-highliht-output').innerHTML = '&nbsp;';
+                document.getElementById('tag-highliht-output').innerHTML = '';
                   location.hash = '';
               } else {
                 location.hash = tag;
@@ -91,9 +97,9 @@ $PLUGINS = [
           if (document.getElementById('tag-highliht-output') == undefined) {
             // insert after first h1
             let out = document.createElement('p');
-            out.innerHTML = '<em id=\"tag-highliht-output\">&nbsp;</em>';
-            let firsth1 = document.getElementById('tagging-script').parentNode.querySelector('h1');
-            firsth1.parentNode.insertBefore(out, firsth1.nextSibling);
+            out.innerHTML = '<em id=\"tag-highliht-output\"></em>';
+            let parent = document.getElementById('tagging-script').parentNode;
+            parent.insertBefore(out, parent.firstChild);
           }
           if (location.hash.length > 1) {
             let tag = location.hash.substr(1);
