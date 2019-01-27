@@ -16,6 +16,8 @@ function create_for_path($target_path, $cfg) {
   // a function we can pass along to render markdown with our parsedown parser
   $parse_func = function ($markdown) use ($Parsedown) {return $Parsedown->text($markdown);};
 
+  custom_log("\n## Rendering contents of $cfg[use]");
+
   // test for illegal paths
   if (preg_match('/\\.\\./', $target_path)) {
     throw new Error("[create_for_path] Path can't contain ..");
@@ -24,6 +26,27 @@ function create_for_path($target_path, $cfg) {
   // defaults
   if (!isset($cfg['use'])) $cfg['use'] = $target_path;
   if (!isset($cfg['title'])) $cfg['title'] = $CONFIG['title'];
+
+  // build plugin library
+  $plugins = [];
+  if (isset($cfg['plugin'])) {
+    if (!isset($cfg['plugin'][0])) $cfg['plugin'] = [$cfg['plugin']];
+
+    foreach ($cfg['plugin'] as $plugin_cfg) {
+      $plugin_cfg['..'] = $cfg;
+      if (isset($PLUGINS[$plugin_cfg['name']]))  {
+        $plugins[] = [
+          "methods" => $PLUGINS[$cfg['plugin']['name']],
+          "config" => $plugin_cfg
+        ];
+      } else {
+        custom_log('# Error: Plugin '.$plugin_cfg['name'].' could not be found.');
+      }
+    }
+  }
+
+  // call before_route
+  call_plugin_function($plugins, 'before_route', $target_path);
 
   // choose a layout
   $layout = $CONFIG['layout'];
@@ -58,19 +81,6 @@ function create_for_path($target_path, $cfg) {
   $folder = in_source_folder($cfg['use'] . "/");
   $files = scandir($folder);
 
-  // get plugin
-  $plugin = [];
-  if (isset($cfg['plugin'])) {
-    $cfg['plugin']['..'] = $cfg;
-    if (isset($PLUGINS[$cfg['plugin']['name']]))  {
-      $plugin = $PLUGINS[$cfg['plugin']['name']];
-    } else {
-      custom_log('Error: Plugin '.$cfg['plugin']['name'].' could not be found.');
-    }
-  }
-
-  custom_log("\n## Rendering contents of $cfg[use]");
-
   $rendered_pages = [];
 
   // create path to files:
@@ -93,16 +103,17 @@ function create_for_path($target_path, $cfg) {
     // extract title from metadata (or raw content, if no title is set in metadata)
     $title = create_title($cfg['title'], extract_title($metadata, $raw_content));
 
-    // apply plugin, if available
-    if (isset($plugin['before_parse'])) {
-      $raw_content = $plugin['before_parse']($cfg['plugin'], $raw_content, $metadata);
-    }
+    // apply plugin
+    call_plugin_function($plugins, 'before_parse', $raw_content, $file, $metadata);
 
     // parse markdown
     $content_body = $Parsedown->text($raw_content);
 
     // assemble html file
     $content = complete_doc($content_body, $title, $layout, $headers);
+
+    // apply plugin
+    call_plugin_function($plugins, 'after_parse', $content, $file, $metadata);
 
     $target_file = $_SERVER['DOCUMENT_ROOT'] . '/' . $target_path . preg_replace('/\\.md$/', '.html', $file);
 
@@ -120,14 +131,16 @@ function create_for_path($target_path, $cfg) {
   }
 
   // if the plugin wants to generate an index, let it do it's job
-  if (isset($plugin['index'])) {
-    $plugin['index']($cfg['plugin'], $rendered_pages, function ($content, $title) use ($target_path, $layout, $headers) {
+  call_plugin_function($plugins, 'index', [
+    $rendered_pages,
+    function ($content, $title) use ($target_path, $layout, $headers) {
       file_put_contents(
         $_SERVER['DOCUMENT_ROOT'] . '/' . $target_path . 'index.html',
         complete_doc($content, $title, $layout, $headers)
       );
-    }, $parse_func);
-  }
+    },
+    $parse_func
+  ]);
 }
 
 

@@ -1,5 +1,24 @@
 <?php
 
+function call_plugin_function($plugins, $name, $args) {
+  foreach ($plugins as $plugin) {
+    if (isset($plugin['methods'][$name])) {
+      $plugin[$name]($plugin['config'], ...$args);
+    }
+  }
+}
+
+function define_plugin($name, $methods) {
+  global $PLUGINS;
+
+  if (isset($PLUGINS[$name])) {
+    custom_log("# Error: there already is a plugin loaded with name $name!");
+    return;
+  }
+
+  $PLUGINS[$name] = $methods;
+}
+
 $PLUGINS = [
   'bloglike' => [
     'index' => function ($config, $pages, $write_to_file, $parse) {

@@ -12,11 +12,12 @@ Please refer to [the tutorial](tutorial.md) for more details on usage.
    - `css: "/path/to/css" | [paths]` additional css files to be included (either a string, or array of strings). Paths are relative to the css directory `/css`
    - `layout: "layout.html"` Use a special template for this route. Relative to the `/source` directory
    - `protection: {<type>: <config>}` specify a protection mechanism. e.g. `password: "123456"` or `ip: {"220.248.0.0/14": "block", "65.19.146": "block"}` (block chinese ip addresses) (not implemented yet)
+   - `plugin: {name: "name", <additional config>}`, you can also supply an array or plugin configs.
  - `layout: "layout.html"`
  - `title: "template string %s"` specify a global title template  (gets overwritten by route-specific configurations)
  - `themes: ["theme1", "theme2", ...]` list of theme names
  - `authkeys: ["key1", "key2", ...]` list of authentication keys. When set, building requires authentication with one of these keys.
- - `formatting: {date: <php date formattin>, time: <format>, datetime: <format>}` define formatting for displaying and parsing dates. Default is 
+ - `formatting: {date: <php date formattin>, time: <format>, datetime: <format>}` define formatting for displaying and parsing dates. Default is
    ```
     "formatting": {
         "date": "d.m.Y",
@@ -77,15 +78,33 @@ You can omit the system line if you don't plan on changin anything with the syst
  - different layouts for different routes / page
  - no passwords
  - global / local blacklist for files (i.e. don't render `README.md` for specific folders);
- - enable user supplied plugins
- - 
+ - enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
 
 
 ## Plugins
 
-Hooks (config refers to plugin config):
- - `before_parse($config, $raw_content, $metadata)` gets applied right before the markdown gets rendered
- - `index($config, $pages, $write_to_file, $parse)` to create a generated `index.html` file
+Available hooks: (`$config` refers to plugin config, the route config can always be found in `$config['..']`)
+ - `before_route($config, $target_path)` called before route is started, here you can modify the route config
+ - `before_parse($config, $raw_content, $file, $metadata)` called right before the markdown gets rendered - you can change `$file` to change the target file name.
+ - `after_parse($config, $content, $file, $metadata)` called right after the markdown gets rendered - you can change `$file` to change the target file name.
+ - `index($config, $pages, $write_to_file, $parse)` to create a generated `index.html` file - called after every file was rendered
   - `$pages` contains metadata, title (rendered through template), url, filename and contents (as html).
   - `$write_to_file($content)` is a funcion that writes the content to the `index.html`
   - `$parse($markdown)` renders markdown to html
+
+### Add a plugin:
+
+If you want to add a plugin, use the `define_plugin($name, $methods)` function like this (make sure this file is included in the build process):
+
+```php
+<?php
+
+define_plugin("your-plugin", [
+  "before_parse" => function ($config, &$raw_content, $file, $metadata) {
+    $raw_content .= "\n **custom plugin footer**";
+  }
+]);
+?>
+```
+
+And in your `config.json` add `"plugin": {"name": "your-plugin"}` for a specific route. This will append `<strong>custom plugin footer</strong>` to every page on that route.
