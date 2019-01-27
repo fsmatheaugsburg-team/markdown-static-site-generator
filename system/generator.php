@@ -30,14 +30,19 @@ function create_for_path($target_path, $cfg) {
   if (isset($cfg['layout'])) $layout = $cfg['layout'];
 
   // make header list
-  $headers = [];
-  if (isset($cfg['headers'])) $headers = $cfg['headers'];
-  if (!is_array($headers)) $headers = [$headers];
+  // order is global[headers], route[headers], config[css]
+  $headers = array_merge([], $CONFIG['headers']);
 
-  // merge in global headers
-  $headers = array_merge($headers, $CONFIG['headers']);
+  if (isset($cfg['headers'])) {
+    $headers = array_merge($headers, is_array($cfg['headers']) ? $cfg['headers'] : [$cfg['headers']]);
+  }
 
   // add css to headers
+  $headers = array_merge($headers, [
+    '<link rel="stylesheet" href="/css/base.css"/>',
+    '<link rel="stylesheet" href="/css/current_theme.php"/>'
+  ]);
+
   if (isset($cfg['css'])) {
     $css = $cfg['css'];
     if (!is_array($css)) $css = [$css];

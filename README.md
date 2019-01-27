@@ -2,32 +2,7 @@
 
 This is only the page generator code, the webpage is defined in another repository.
 
-## Creating a hello world page
-
-To create a bare-minimum static page, follow these steps:
-
-create your `config.json`:
-
-```
-{
-  "routes": {
-    "/": {}
-  }
-}
-```
-
-your `layout.html`:
-```
-{{body}}
-```
-
-your `index.md`:
-```
-# hello world
-```
-
-Then upload your stuff / start the docker container and visit `yoururl.com/system` and press build
-
+Please refer to [the tutorial](tutorial.md) for more details on usage.
 
 ## `config.json` format
 
@@ -40,6 +15,7 @@ Then upload your stuff / start the docker container and visit `yoururl.com/syste
  - `layout: "layout.html"`
  - `title: "template string %s"` specify a global title template  (gets overwritten by route-specific configurations)
  - `themes: ["theme1", "theme2", ...]` list of theme names
+ - `authkeys: ["key1", "key2", ...]` list of authentication keys. When set, building requires authentication with one of these keys.
 
 
 # Docker
