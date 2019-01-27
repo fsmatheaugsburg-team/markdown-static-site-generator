@@ -26,6 +26,32 @@ Please refer to [the tutorial](tutorial.md) for more details on usage.
     ```
 
 
+## Folder structure
+
+An example folder structure might be:
+
+```
+source/
+  |-- css/                   -> your css files
+      |-- base.css           -> your base css file
+      |-- *.css              -> all other .css files will be linked into /css
+  |-- blog/                  -> files for a defined route
+      |-- article1.md        -> a blog article
+      |-- article2.md        -> next blog article
+      |-- ...                -> ...
+  |-- public/                -> public files, will be linked to /public
+      |-- fonts/             -> fonts, images, etc can be put here
+      |-- images/            -> these are then available in /public/images/
+      |-- scripts/           -> of course you can also embed scripts
+      |-- ...
+  |-- index.md               -> Website index
+  |-- config.json            -> your config json
+  |-- layout.html            -> your layout file
+  |-- different-layout.html  -> another layout file
+  |-- favicon.ico            -> your favicon, this will be linked to /favicon.ico
+
+```
+
 ## Using Docker
 
 build the image: `sudo docker build -t mssg .`
