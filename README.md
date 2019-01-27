@@ -7,28 +7,32 @@ Please refer to [the tutorial](tutorial.md) for more details on usage.
 ## `config.json` format
 
  - `routes` define all your routes, keys are absolute paths (on the target blog), settings are:
-  - `use: "/path"` the folder containing the markdown files (relative to the `/source` directory). Default is the target path (this objects key). All markdown files in this directory will be rendered to HTML and made public (except `README.md`).
-  - `title: "title with %s placeholder"` template for the page titles, `%s` is replaced with the documents title
-  - `css: "/path/to/css" | [paths]` additional css files to be included (either a string, or array of strings). Paths are relative to the css directory `/css`
-  - `layout: "layout.html"` Use a special template for this route. Relative to the `/source` directory
-  - `protection: {<type>: <config>}` specify a protection mechanism. e.g. `password: "123456"` or `ip: {"220.248.0.0/14": "block", "65.19.146": "block"}` (block chinese ip addresses) (not implemented yet)
+   - `use: "/path"` the folder containing the markdown files (relative to the `/source` directory). Default is the target path (this objects key). All markdown files in this directory will be rendered to HTML and made public (except `README.md`).
+   - `title: "title with %s placeholder"` template for the page titles, `%s` is replaced with the documents title
+   - `css: "/path/to/css" | [paths]` additional css files to be included (either a string, or array of strings). Paths are relative to the css directory `/css`
+   - `layout: "layout.html"` Use a special template for this route. Relative to the `/source` directory
+   - `protection: {<type>: <config>}` specify a protection mechanism. e.g. `password: "123456"` or `ip: {"220.248.0.0/14": "block", "65.19.146": "block"}` (block chinese ip addresses) (not implemented yet)
  - `layout: "layout.html"`
  - `title: "template string %s"` specify a global title template  (gets overwritten by route-specific configurations)
  - `themes: ["theme1", "theme2", ...]` list of theme names
  - `authkeys: ["key1", "key2", ...]` list of authentication keys. When set, building requires authentication with one of these keys.
+ - `formatting: {date: <php date formattin>, time: <format>, datetime: <format>}` define formatting for displaying and parsing dates. Default is 
+   ```
+    "formatting": {
+        "date": "d.m.Y",
+        "time": "H:i",
+        "datetime": "d.m.Y - H:i"
+    }
+    ```
 
 
-# Docker
+## Using Docker
 
-## local testing:
-
-build the image
-
-`sudo docker build -t mssg .`
+build the image: `sudo docker build -t mssg .`
 
 then run
 
-```
+```bash
 sudo docker run -it -p 8000:80 \
 -v /path/to/your/source:/var/www/html/source \
 -v /path/to/your/system:/var/www/html/system mssg "/root/start-script.sh"
@@ -40,12 +44,15 @@ to
  - do the same thing for the `system` folder
  - run the startup script (which will drop a bash shell)
 
+You can omit the system line if you don't plan on changin anything with the system.
 
 ## TODO
 
  - different layouts for different routes / page
  - no passwords
  - global / local blacklist for files (i.e. don't render `README.md` for specific folders);
+ - enable user supplied plugins
+ - 
 
 
 ## Plugins

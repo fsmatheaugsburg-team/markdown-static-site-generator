@@ -16,7 +16,7 @@ All your content goes into the `source` folder. In there you have a `config.json
 
 create your `config.json`:
 
-```json
+```JSON
 {
   "routes": {
     "/": {}
@@ -108,7 +108,7 @@ You can specify any number of attributes in each markdown file like this:
 
 # hello world
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor...
 ```
 
 The metadata will be read out, and removed from the markdown before render. Metadata is also passed on to plugins, but that will be coveref later on.
