@@ -26,6 +26,17 @@ Please refer to [the tutorial](tutorial.md) for more details on usage.
     }
     ```
 
+## Example projects
+
+Just upload the contents of these into your `/source` folder and press "build" in your panel.
+
+Example project setups can be found inside the `/example` folder:
+ - `/example/hello-world` The absolute minimum required to get your project going
+ - `/example/basic` A goof starting off point. It has things configured like
+   - The `bloglike` plugin. This enables you to have a blog, or something similar
+   - A layout with some CSS (internal + external) to make it look presentable
+   - A favicon and some public folders / images
+
 
 ## Folder structure
 

@@ -1,0 +1,51 @@
+html, body {
+  min-height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  font-family: 'roboto', sans-serif;
+}
+
+main {
+  width: 70%;
+  max-width: 1024px;
+  margin: 32px auto;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 1px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+header {
+  border-bottom: 1px solid #ddd;
+  padding: 16px;
+}
+
+header h1 {
+  margin: 0;
+  font-weight: 300;
+}
+
+article {
+  padding: 16px;
+  flex-grow: 1;
+}
+
+footer {
+  border-top: 1px solid #ddd;
+  padding: 16px;
+}
+
+img {
+  max-width: 100%;
+  margin: auto;
+  display: block;
+}
+
+
+h1, h2, h3 {
+  font-weight: 400;
+}

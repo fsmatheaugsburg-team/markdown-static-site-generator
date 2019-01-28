@@ -16,7 +16,6 @@ function create_for_path($target_path, $cfg) {
   // a function we can pass along to render markdown with our parsedown parser
   $parse_func = function ($markdown) use ($Parsedown) {return $Parsedown->text($markdown);};
 
-  custom_log("\n## Rendering contents of $cfg[use]");
 
   // test for illegal paths
   if (preg_match('/\\.\\./', $target_path)) {
@@ -27,18 +26,23 @@ function create_for_path($target_path, $cfg) {
   if (!isset($cfg['use'])) $cfg['use'] = $target_path;
   if (!isset($cfg['title'])) $cfg['title'] = $CONFIG['title'];
 
+  custom_log("\n## Rendering contents of $cfg[use]");
+
   // build plugin library
   $plugins = [];
   if (isset($cfg['plugin'])) {
     if (!isset($cfg['plugin'][0])) $cfg['plugin'] = [$cfg['plugin']];
 
+    var_dump($cfg['plugin']);
+
     foreach ($cfg['plugin'] as $plugin_cfg) {
       $plugin_cfg['..'] = $cfg;
       if (isset($PLUGINS[$plugin_cfg['name']]))  {
         $plugins[] = [
-          "methods" => $PLUGINS[$cfg['plugin']['name']],
+          "methods" => $PLUGINS[$plugin_cfg['name']],
           "config" => $plugin_cfg
         ];
+        custom_log("loaded plugin: $plugin_cfg[name]");
       } else {
         custom_log('# Error: Plugin '.$plugin_cfg['name'].' could not be found.');
       }

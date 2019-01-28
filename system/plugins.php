@@ -1,9 +1,11 @@
 <?php
 
 function call_plugin_function($plugins, $name, $args) {
+  if (sizeof($plugins) == 0) return;
   foreach ($plugins as $plugin) {
     if (isset($plugin['methods'][$name])) {
-      $plugin[$name]($plugin['config'], ...$args);
+      custom_log("applying plugin " . $plugin['config']['name'] . ".$name");
+      $plugin['methods'][$name]($plugin['config'], ...$args);
     }
   }
 }
@@ -33,7 +35,7 @@ $PLUGINS = [
         $markdown = "";
       }
 
-      $article_layout = isset($config['layout']) ? $config['layout'] : "## {{title}}\n*Writtenn on the {{date}}*\n\n{{preview}} [more]({{url}})";
+      $article_layout = isset($config['layout']) ? $config['layout'] : "## [{{title}}]({{url}})\n*Writtenn on the {{date}}*\n\n{{preview}} [more]({{url}})";
 
       $articles = [];
 
