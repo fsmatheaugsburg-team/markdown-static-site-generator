@@ -12,7 +12,7 @@ Things that are not implemented yet, but will be included at some point...
  - global / local blacklist for files (i.e. don't render `README.md` for specific folders);
  - enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
  - Tell the browser about themes ([source](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#Providing_alternative_stylesheets))
- - Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme?theme=light`
+ - Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme.php?theme=light`
 
 ## `config.json` format
 
@@ -71,6 +71,7 @@ source/
   |-- layout.html            -> your layout file
   |-- different-layout.html  -> another layout file
   |-- favicon.ico            -> your favicon, this will be linked to /favicon.ico
+  |-- .htaccess              -> protect your config (containing deploy keys)
 ```
 
 ## Using Docker

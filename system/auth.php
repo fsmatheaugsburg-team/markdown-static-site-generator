@@ -1,10 +1,14 @@
 <?php
+/**
+ * This file handles authentication
+ *
+ */
 
 if (!isset($CONFIG)) die("config required");
 
 function is_authorized($token) {
   global $CONFIG;
-  
+
   if (!isset($CONFIG['authtokens'])) {
     if (function_exists('custom_log')) {
       custom_log('# Critical security error: No Authorization set! Allowing everything!');

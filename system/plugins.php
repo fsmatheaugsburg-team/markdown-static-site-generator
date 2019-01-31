@@ -1,15 +1,26 @@
 <?php
 
+/**
+ *  calls method $name for all plugins in the $plugin array
+ *  $plugins  is an array of plugin methods and config pairs. It's structured like this {methods: $PLUGIN[name], config: <plugin-config>}
+ *  $name     is the name of the method that should be called
+ *  $args     array of arguments for the plugin method
+ */
 function call_plugin_function($plugins, $name, $args) {
   if (sizeof($plugins) == 0) return;
   foreach ($plugins as $plugin) {
     if (isset($plugin['methods'][$name])) {
       custom_log("applying plugin " . $plugin['config']['name'] . ".$name");
-      $plugin['methods'][$name]($plugin['config'], ...$args);
+      try {
+        $plugin['methods'][$name]($plugin['config'], ...$args);
+      } catch (Exception | Error $e) {
+        custom_log("Error applying plugin " . $plugin['config']['name'] . ".$name: " . $e->getMessage());
+      }
     }
   }
 }
 
+// define a plugin with $name and $methods
 function define_plugin($name, $methods) {
   global $PLUGINS;
 
@@ -23,36 +34,47 @@ function define_plugin($name, $methods) {
 
 $PLUGINS = [
   'bloglike' => [
+    // generates the file with a list of all blogposts
     'index' => function ($config, $pages, $write_to_file, $parse) {
       global $CONFIG;
 
+      // manage defaults
       if (!isset($config['previewlen'])) $config['previewlen'] = 200;
       if (!isset($config['title'])) $config['title'] = 'Blog entries';
 
+      // insert title, if a title is set
       if ($config['title'] != null) {
         $markdown = "# " . $config['title'] . "\n";
       } else {
         $markdown = "";
       }
 
-      $article_layout = isset($config['layout']) ? $config['layout'] : "## [{{title}}]({{url}})\n*Writtenn on the {{date}}*\n\n{{preview}} [more]({{url}})";
+      // article := a list entry of the blogposts
+      // get the article layout, or use default one
+      $article_layout = isset($config['layout']) ? $config['layout'] : "## #{{index}}: [{{title}}]({{url}})\n*Writtenn on the {{date}}*\n\n{{preview}} [more]({{url}})";
 
+      // save all generated articles, so we can sort them
       $articles = [];
 
+      // enable numbering articles
       $index = 0;
       foreach ($pages as $post) {
+        // get the metadata
         $metadata = $post['metadata'];
         if (!isset($metadata['date'])) {
           throw new Error("[plugin:bloglike] all blog entries must have a date in their metadata!");
         }
+        // get the publish date
         $timestamp = timestamp_from_date($metadata['date'], $CONFIG['formatting']['date']);
 
+        // create dictionary and merge metadata into it
         $dict = array_merge(default_dict([
-          'index' => $index,
+          'index' => sizeof($pages) - $index,
           'preview' => substr(simplify_text(strip_tags($post['content'])), 0, $config['previewlen']) . '...',
           'url' => $post['url']
         ], 0), $metadata);
 
+        // put article in the list
         $articles[] = [
           'content' => "\n" . fill_template_string_dict($article_layout, $dict) . "\n",
           'date' => $timestamp
@@ -61,17 +83,19 @@ $PLUGINS = [
         $index++;
       }
 
-      // sort by date
+      // sort articles by date
       usort($articles, function ($a, $b) {
           return $b['date'] - $a['date'];
       });
 
+      // append articles to markdown
       foreach($articles as $page) {
         $markdown .= $page['content'];
       }
 
       $rendered = $parse($markdown);
 
+      // append tagging logic, if tagging is enabled (disabled by default)
       if ($config['tagged']) {
         $rendered .= "\n<script id='tagging-script'>
           const taggedArticles = {
@@ -129,6 +153,7 @@ $PLUGINS = [
         </script>";
       }
 
+      // write index to file
       $write_to_file($rendered, $config['title']);
     }
   ]

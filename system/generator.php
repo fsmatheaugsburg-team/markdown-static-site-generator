@@ -1,5 +1,9 @@
 <?php
-
+/**
+ *  This is the main file, it holds most of the generating logic
+ *  if called with ?build it will start a build (if authenticated)
+ *
+ */
 require_once('config.php');
 require_once('auth.php');
 require_once('complete_doc.php');
