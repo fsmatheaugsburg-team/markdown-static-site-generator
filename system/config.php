@@ -41,8 +41,21 @@ if (isset($CONFIG['headers'])) {
   $CONFIG['headers'] = [];
 }
 
+
+// project root path
+$PROJECT_ROOT = realpath(dirname(__FILE__) . '/../');
+
+var_dump($PROJECT_ROOT);
+var_dump($_SERVER['DOCUMENT_ROOT']);
+
+// relative in source folder
 function in_source_folder($path) {
-  return $_SERVER['DOCUMENT_ROOT'] . '/source/' . $path;
+  return in_project_root('source/' . $path);
+}
+// relative in project folder
+function in_project_root($path) {
+  global $PROJECT_ROOT;
+  return $PROJECT_ROOT . '/' . $path;
 }
 
 ?>

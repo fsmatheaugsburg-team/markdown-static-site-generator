@@ -31,9 +31,9 @@ function create_for_path($target_path, $cfg) {
   // build plugin library
   $plugins = [];
   if (isset($cfg['plugin'])) {
+    // if it's not an arrray of objects, but an associative array
+    // turn it into an array pf associative arrays
     if (!isset($cfg['plugin'][0])) $cfg['plugin'] = [$cfg['plugin']];
-
-    var_dump($cfg['plugin']);
 
     foreach ($cfg['plugin'] as $plugin_cfg) {
       $plugin_cfg['..'] = $cfg;
@@ -66,15 +66,15 @@ function create_for_path($target_path, $cfg) {
 
   // add css to headers
   $headers = array_merge($headers, [
-    '<link rel="stylesheet" href="/css/base.css"/>',
-    '<link rel="stylesheet" href="/css/current_theme.php"/>'
+    '<link rel="stylesheet" href="{{root}}/css/base.css"/>',
+    '<link rel="stylesheet" href="{{root}}/css/current_theme.php"/>'
   ]);
 
   if (isset($cfg['css'])) {
     $css = $cfg['css'];
     if (!is_array($css)) $css = [$css];
     foreach($css as $cssurl) {
-      $headers[] = "<link rel=\"stylesheet\" href=\"/css/$cssurl\"/>";
+      $headers[] = "<link rel=\"stylesheet\" href=\"{{root}}/css/$cssurl\"/>";
     }
   }
 
@@ -88,7 +88,7 @@ function create_for_path($target_path, $cfg) {
   $rendered_pages = [];
 
   // create path to files:
-  mkdir($_SERVER['DOCUMENT_ROOT'] . '/' . $target_path, 0777, true);
+  mkdir(in_project_root($target_path), 0777, true);
 
   foreach ($files as $file) {
     // ignore non markdown files
@@ -119,7 +119,7 @@ function create_for_path($target_path, $cfg) {
     // apply plugin
     call_plugin_function($plugins, 'after_parse', $content, $file, $metadata);
 
-    $target_file = $_SERVER['DOCUMENT_ROOT'] . '/' . $target_path . preg_replace('/\\.md$/', '.html', $file);
+    $target_file = in_project_root($target_path . preg_replace('/\\.md$/', '.html', $file));
 
     // write generated file
     file_put_contents($target_file, $content);
@@ -139,7 +139,7 @@ function create_for_path($target_path, $cfg) {
     $rendered_pages,
     function ($content, $title) use ($target_path, $layout, $headers) {
       file_put_contents(
-        $_SERVER['DOCUMENT_ROOT'] . '/' . $target_path . 'index.html',
+        in_project_root($target_path . '/index.html'),
         complete_doc($content, $title, $layout, $headers)
       );
     },
@@ -195,14 +195,14 @@ function link_from_source($name, $absolute = false) {
       throw new Exception("Can't link from source if path is not in source! (given: $name, not in: $basepath) [\$absolute=true]");
     }
   }
-  // determine source and target (source absolute, target relative to the web root)
+  // determine source and target (source absolute, target relative to the project root)
   $path = $absolute ? $name : in_source_folder($name);
   $target = $absolute ? substr($name, strlen($basepath)) : $name;
 
   custom_log("linking $path => $target");
 
   if (file_exists($path)) {
-    return symlink($path, $_SERVER['DOCUMENT_ROOT'] . '/'. $target);
+    return symlink($path, in_project_root($target));
   }
 }
 
@@ -226,7 +226,7 @@ function build() {
     // link the css files
     foreach (glob(in_source_folder('css/') . '*.{css}', GLOB_BRACE) as $file) {
       link_from_source($file, true);
-      symlink($file, $_SERVER['DOCUMENT_ROOT'] . '/css/' . basename($file));
+      symlink($file, in_project_root('/css/' . basename($file)));
     }
 
     custom_log("\n# Config: \n\n````");

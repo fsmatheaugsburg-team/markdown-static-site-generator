@@ -17,6 +17,7 @@ function complete_doc($body, $title, $layout, $headers = "") {
     'title' => $title
   ]);
 
+  $headers = fill_template_string_dict($headers, default_dict(["title" => $title]));
   $layout_filled = fill_template_string_dict($layout, $dict);
 
   return '<!DOCTYPE html>
@@ -39,7 +40,7 @@ function get_layout_cached($name) {
 
   $layout = file_get_contents(in_source_folder($name));
 
-  if ($layout == false) throw new Error("[get_layout_cached] Can't locate layout with $name!");
+  if ($layout == false) throw new Error("[get_layout_cached] Can't locate layout at " . in_source_folder($name) . "!");
 
   $LAYOUT_CACHE[$name] = $layout;
 
@@ -59,13 +60,23 @@ function fill_template_string_dict($string, $dict) {
 
 // creates the default dctionary (date, time, etc)
 function default_dict($with = [], $timestamp = false) {
-  global $CONFIG;
+  global $CONFIG, $PROJECT_ROOT;
 
   if ($timestamp == false || $timestamp == null) $timestamp = time();
 
   if (!isset($with['date'])) $with['date'] = date($CONFIG['formatting']['date'], $timestamp);
   if (!isset($with['time'])) $with['time'] = date($CONFIG['formatting']['time'], $timestamp);
   if (!isset($with['datetime'])) $with['datetime'] = date($CONFIG['formatting']['datetime'], $timestamp);
+
+  $proj_root = $PROJECT_ROOT;
+  $web_root = $_SERVER['DOCUMENT_ROOT'];
+
+
+  if (substr($proj_root, 0, strlen($web_root)) != $web_root) {
+    throw new Exception("Can't link from source if path is not in source! (given: $name, not in: $basepath) [\$absolute=true]");
+  }
+
+  $with['root'] = substr($proj_root, strlen($web_root));
 
   return $with;
 }
