@@ -13,6 +13,8 @@ Things that are not implemented yet, but will be included at some point...
  - enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
  - Tell the browser about themes ([source](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#Providing_alternative_stylesheets))
  - Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme.php?theme=light`
+ - enable caching (store hashes of already generated files to prevent complete re-render)
+ - generate sitemap for search-engines
 
 ## `config.json` format
 

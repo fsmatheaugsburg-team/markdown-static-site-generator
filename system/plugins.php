@@ -51,7 +51,7 @@ $PLUGINS = [
 
       // article := a list entry of the blogposts
       // get the article layout, or use default one
-      $article_layout = isset($config['layout']) ? $config['layout'] : "## #{{index}}: [{{title}}]({{url}})\n*Writtenn on the {{date}}*\n\n{{preview}} [more]({{url}})";
+      $article_layout = isset($config['layout']) ? $config['layout'] : "## #{{index}}: [{{title}}]({{url}})\n*Written on the {{date}}*\n\n{{preview}} [more]({{url}})";
 
       // save all generated articles, so we can sort them
       $articles = [];
