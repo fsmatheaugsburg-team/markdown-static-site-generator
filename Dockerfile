@@ -13,7 +13,13 @@ RUN chmod +x /root/start-script.sh
 
 EXPOSE 80
 
-COPY . /var/www/html
+# uncomment for subdirectory testing
+# RUN mkdir /var/www/html/subdir/
+# COPY . /var/www/html/subdir
+
+COPY . /var/www/html/
+
+
 RUN chown -R www-data:www-data /var/www/html/
 
 CMD /root/start-script.sh
