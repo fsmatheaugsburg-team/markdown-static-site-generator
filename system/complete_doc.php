@@ -60,7 +60,7 @@ function fill_template_string_dict($string, $dict) {
 
 // creates the default dctionary (date, time, etc)
 function default_dict($with = [], $timestamp = false) {
-  global $CONFIG, $PROJECT_ROOT;
+  global $CONFIG;
 
   if ($timestamp == false || $timestamp == null) $timestamp = time();
 
@@ -68,15 +68,7 @@ function default_dict($with = [], $timestamp = false) {
   if (!isset($with['time'])) $with['time'] = date($CONFIG['formatting']['time'], $timestamp);
   if (!isset($with['datetime'])) $with['datetime'] = date($CONFIG['formatting']['datetime'], $timestamp);
 
-  $proj_root = $PROJECT_ROOT;
-  $web_root = $_SERVER['DOCUMENT_ROOT'];
-
-
-  if (substr($proj_root, 0, strlen($web_root)) != $web_root) {
-    throw new Exception("Can't link from source if path is not in source! (given: $name, not in: $basepath) [\$absolute=true]");
-  }
-
-  $with['root'] = substr($proj_root, strlen($web_root));
+  $with['root'] = get_webroot_offset();
 
   return $with;
 }

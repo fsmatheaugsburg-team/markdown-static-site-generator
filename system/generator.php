@@ -218,7 +218,7 @@ function link_from_source($name, $absolute = false) {
   $path = $absolute ? $name : in_source_folder($name);
   $target = $absolute ? substr($name, strlen($basepath)) : $name;
 
-  custom_log("linking $path => $target");
+  custom_log("linking `$path => $target`");
 
   if (file_exists($path)) {
     return symlink($path, in_project_root($target));
@@ -231,13 +231,16 @@ function build() {
 
   try {
     custom_log("# Rendering:");
-    $rendered_pages = $rendered_pages;
+    $rendered_pages = [];
     foreach ($CONFIG['routes'] as $target_path => $cfg) {
       $rendered_pages = array_merge($rendered_pages, create_for_path($target_path, $cfg));
     }
 
+    custom_log("\n# Generating sitemap");
     $sitemap = generate_sitemap($rendered_pages);
-    custom_log($sitemap);
+    file_put_contents(in_project_root('sitemap.xml'), $sitemap);
+
+    custom_log('```xml' . "\n" . $sitemap . '```');
 
     custom_log("\n# Linking resources:");
 

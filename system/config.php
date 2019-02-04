@@ -66,4 +66,18 @@ function in_project_root($path) {
   return $PROJECT_ROOT . '/' . $path;
 }
 
+function get_webroot_offset() {
+  global $PROJECT_ROOT;
+
+  $proj_root = $PROJECT_ROOT;
+  $web_root = $_SERVER['DOCUMENT_ROOT'];
+
+
+  if (substr($proj_root, 0, strlen($web_root)) != $web_root) {
+    throw new Exception("Can't link from source if path is not in source! (given: $name, not in: $basepath) [\$absolute=true]");
+  }
+
+  return substr($proj_root, strlen($web_root));
+}
+
 ?>
