@@ -236,7 +236,8 @@ function build() {
       $rendered_pages = array_merge($rendered_pages, create_for_path($target_path, $cfg));
     }
 
-    generate_sitemap($rendered_pages);
+    $sitemap = generate_sitemap($rendered_pages);
+    custom_log($sitemap);
 
     custom_log("\n# Linking resources:");
 

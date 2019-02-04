@@ -8,5 +8,7 @@ function generate_sitemap($rendered_pages) {
     $output .= '<url>\n<loc>' . $page['url'] . '</loc>\n<lastmod>' . date('Y-m-d') . '</lastmod>';
   }
   $output .= '</urlset>\n';
+
+  return $output;
 }
 ?>
