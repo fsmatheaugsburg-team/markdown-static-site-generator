@@ -10,6 +10,7 @@ require_once('complete_doc.php');
 require_once('date_time.php');
 require_once('plugins.php');
 require_once('Parsedown.php');
+require_once('sitemap.php');
 
 $Parsedown = new Parsedown();
 
@@ -138,10 +139,23 @@ function create_for_path($target_path, $cfg) {
     ];
   }
 
+  // ensure index is added only once to rendered_pages
+  $index_set = false;
+
   // if the plugin wants to generate an index, let it do it's job
   call_plugin_function($plugins, 'index', [
     $rendered_pages,
-    function ($content, $title) use ($target_path, $layout, $headers) {
+    function ($content, $title) use ($target_path, $layout, $headers, $index_set) {
+      if (!$index_set) {
+        $rendered_pages[] = [
+          'metadata' => [],
+          'title' => $title,
+          'url' => $target_path . '/index.html',
+          'file' => null,
+          'content' => $content
+        ];
+        $index_set = true;
+      }
       file_put_contents(
         in_project_root($target_path . '/index.html'),
         complete_doc($content, $title, $layout, $headers)
@@ -149,6 +163,7 @@ function create_for_path($target_path, $cfg) {
     },
     $parse_func
   ]);
+  return $rendered_pages;
 }
 
 
@@ -216,9 +231,12 @@ function build() {
 
   try {
     custom_log("# Rendering:");
+    $rendered_pages = $rendered_pages;
     foreach ($CONFIG['routes'] as $target_path => $cfg) {
-      create_for_path($target_path, $cfg);
+      $rendered_pages = array_merge($rendered_pages, create_for_path($target_path, $cfg));
     }
+
+    generate_sitemap($rendered_pages);
 
     custom_log("\n# Linking resources:");
 
