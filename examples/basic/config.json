@@ -3,6 +3,7 @@
     "/": {},
     "/blog/": {
       "title": "My Blog - %s",
+      "recursive": true,
       "plugin": [
         {
           "name": "bloglike"

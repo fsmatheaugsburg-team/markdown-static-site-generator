@@ -8,13 +8,14 @@ Please refer to [the tutorial](tutorial.md) for more details on usage.
 
 Things that are not implemented yet, but will be included at some point...
 
- - Enable password / ipbased protection (local and global, ideally) (could be done via plugin?)
- - global / local blacklist for files (i.e. don't render `README.md` for specific folders);
- - enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
- - Tell the browser about themes ([source](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#Providing_alternative_stylesheets))
- - Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme.php?theme=light`
- - enable caching (store hashes of already generated files to prevent complete re-render)
- - generate sitemap for search-engines
+ - [ ] Enable password / ipbased protection (local and global, ideally) (could be done via plugin?)
+ - [ ] global / local blacklist for files (i.e. don't render `README.md` for specific folders);
+ - [ ] enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
+ - [ ] Tell the browser about themes ([source](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#Providing_alternative_stylesheets))
+ - [ ] Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme.php?theme=light`
+ - [ ] enable caching (store hashes of already generated files to prevent complete re-render)
+ - [x] generate sitemap for search-engines
+ - [x] enable recursive routes (i.e. apply this route to every sub-folder as well)
 
 ## `config.json` format
 
@@ -23,6 +24,7 @@ Things that are not implemented yet, but will be included at some point...
    - `title: "title with %s placeholder"` template for the page titles, `%s` is replaced with the documents title
    - `css: "/path/to/css" | [paths]` additional css files to be included (either a string, or array of strings). Paths are relative to the css directory `/css`
    - `layout: "layout.html"` Use a special template for this route. Relative to the `/source` directory
+   - `recursive: true|false` apply route to all subfolders as well (see "basic" example)
    - `protection: {<type>: <config>}` specify a protection mechanism. e.g. `password: "123456"` or `ip: {"220.248.0.0/14": "block", "65.19.146": "block"}` (block chinese ip addresses) (not implemented yet)
    - `plugin: {name: "name", <additional config>}`, you can also supply an array or plugin configs.
  - `layout: "layout.html"`

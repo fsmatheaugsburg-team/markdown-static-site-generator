@@ -61,6 +61,9 @@ function create_for_path($target_path, $cfg) {
   $layout = $CONFIG['layout'];
   if (isset($cfg['layout'])) $layout = $cfg['layout'];
 
+  // get recursive flag (default false)
+  $recursive = isset($cfg['recursive']) ? $cfg['recursive'] : false;
+
   // make header list
   // order is global[headers], route[headers], config[css]
   $headers = array_merge([], $CONFIG['headers']);
@@ -88,9 +91,12 @@ function create_for_path($target_path, $cfg) {
 
   // list of files in Directory
   $folder = in_source_folder($cfg['use'] . "/");
-  $files = scandir($folder);
+  // list of relative paths
+  $files = scanndir_recursive($folder, $recursive);
 
   $rendered_pages = [];
+
+  var_dump($files);
 
   // create path to files:
   mkdir(in_project_root($target_path), 0777, true);
@@ -125,6 +131,9 @@ function create_for_path($target_path, $cfg) {
     call_plugin_function($plugins, 'after_parse', $content, $file, $metadata);
 
     $target_file = in_project_root($target_path . preg_replace('/\\.md$/', '.html', $file));
+
+    // create path to file (if necessary)
+    mkdir(dirname($target_file), 0777, true);
 
     // write generated file
     file_put_contents($target_file, $content);
@@ -223,6 +232,28 @@ function link_from_source($name, $absolute = false) {
   if (file_exists($path)) {
     return symlink($path, in_project_root($target));
   }
+}
+
+function scanndir_recursive($dir, $recursive = true) {
+  var_dump($recursive);
+  $result = [];
+  foreach(scandir($dir) as $filename) {
+    if ($filename[0] === '.') continue;
+
+    $filePath = $dir . '/' . $filename;
+
+    if (is_dir($filePath)) {
+      if ($recursive) {
+        foreach (scanndir_recursive($filePath) as $childFilename) {
+          $result[] = $filename . '/' . $childFilename;
+        }
+      }
+      // ignore if directories if not recursive
+    } else {
+      $result[] = $filename;
+    }
+  }
+  return $result;
 }
 
 // build entire project
