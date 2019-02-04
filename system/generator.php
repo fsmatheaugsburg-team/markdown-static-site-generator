@@ -96,8 +96,6 @@ function create_for_path($target_path, $cfg) {
 
   $rendered_pages = [];
 
-  var_dump($files);
-
   // create path to files:
   mkdir(in_project_root($target_path), 0777, true);
 
@@ -235,7 +233,6 @@ function link_from_source($name, $absolute = false) {
 }
 
 function scanndir_recursive($dir, $recursive = true) {
-  var_dump($recursive);
   $result = [];
   foreach(scandir($dir) as $filename) {
     if ($filename[0] === '.') continue;
