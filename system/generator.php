@@ -292,6 +292,7 @@ function build() {
     custom_log(json_encode($CONFIG, JSON_PRETTY_PRINT) . "\n````");
   } catch (Exception | Error $e) {
     custom_log("# Caught error: " . $e->getMessage());
+    custom_log($e->getTraceAsString());
   }
 
 }
