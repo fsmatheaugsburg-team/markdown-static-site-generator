@@ -6,9 +6,9 @@
  *  $name     is the name of the method that should be called
  *  $args     array of arguments for the plugin method
  */
-function call_plugin_function($plugins, $name, $args) {
+function call_plugin_function(&$plugins, $name, $args) {
   if (sizeof($plugins) == 0) return;
-  foreach ($plugins as $plugin) {
+  foreach ($plugins as &$plugin) {
     if (isset($plugin['methods'][$name])) {
       custom_log("applying plugin " . $plugin['config']['name'] . ".$name");
       try {
@@ -30,6 +30,17 @@ function define_plugin($name, $methods) {
   }
 
   $PLUGINS[$name] = $methods;
+}
+
+function load_plugins() {
+  $plugins = scandir(in_source_folder("plugins/"));
+  foreach ($plugins as $plugin) {
+    $plugin_abs = in_source_folder("plugins/" . $plugin);
+    if (is_file($plugin_abs) && preg_match("/\.php$/", $plugin_abs) !== false) {
+      custom_log("* Loading $plugin");
+      require_once($plugin_abs);
+    }
+  }
 }
 
 $PLUGINS = [

@@ -41,11 +41,11 @@ function create_for_path($target_path, $cfg) {
     if (!isset($cfg['plugin'][0])) $cfg['plugin'] = [$cfg['plugin']];
 
     foreach ($cfg['plugin'] as $plugin_cfg) {
-      $plugin_cfg['..'] = $cfg;
+      $plugin_cfg['..'] = &$cfg;
       if (isset($PLUGINS[$plugin_cfg['name']]))  {
         $plugins[] = [
           "methods" => $PLUGINS[$plugin_cfg['name']],
-          "config" => $plugin_cfg
+          "config" => &$plugin_cfg
         ];
         custom_log("loaded plugin: $plugin_cfg[name]");
       } else {
@@ -55,7 +55,7 @@ function create_for_path($target_path, $cfg) {
   }
 
   // call before_route
-  call_plugin_function($plugins, 'before_route', $target_path);
+  call_plugin_function($plugins, 'before_route', [$target_path]);
 
   // choose a layout
   $layout = $CONFIG['layout'];
@@ -258,6 +258,11 @@ function build() {
   global $CONFIG;
 
   try {
+    if (isset($CONFIG['external_plugins']) && $CONFIG['external_plugins']) {
+      custom_log("# Loading Plugins:");
+      load_plugins();
+    }
+
     custom_log("# Rendering:");
     $rendered_pages = [];
     foreach ($CONFIG['routes'] as $target_path => $cfg) {
