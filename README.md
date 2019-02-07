@@ -10,7 +10,7 @@ Things that are not implemented yet, but will be included at some point...
 
  - [ ] Enable password / ipbased protection (local and global, ideally) (could be done via plugin?)
  - [ ] global / local blacklist for files (i.e. don't render `README.md` for specific folders);
- - [ ] enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
+ - [x] enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
  - [ ] Tell the browser about themes ([source](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#Providing_alternative_stylesheets))
  - [ ] Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme.php?theme=light`
  - [ ] enable caching (store hashes of already generated files to prevent complete re-render)
@@ -27,10 +27,13 @@ Things that are not implemented yet, but will be included at some point...
    - `recursive: true|false` apply route to all subfolders as well (see "basic" example)
    - `protection: {<type>: <config>}` specify a protection mechanism. e.g. `password: "123456"` or `ip: {"220.248.0.0/14": "block", "65.19.146": "block"}` (block chinese ip addresses) (not implemented yet)
    - `plugin: {name: "name", <additional config>}`, you can also supply an array or plugin configs.
+   - `headers: "<header tag>" | [header tags]` Additional header elements
  - `layout: "layout.html"`
  - `title: "template string %s"` specify a global title template  (gets overwritten by route-specific configurations)
  - `themes: ["theme1", "theme2", ...]` list of theme names
+ - `headers: "<header tag>" | [header tags]` Tags to append to your html `<head>`
  - `authkeys: ["key1", "key2", ...]` list of authentication keys. When set, building requires authentication with one of these keys.
+ - `external_plugins: true|false` Use custom plugins defined in the `/source/plugins` folder
  - `formatting: {date: <php date formattin>, time: <format>, datetime: <format>}` define formatting for displaying and parsing dates. Default is
    ```
     "formatting": {
@@ -69,6 +72,10 @@ source/
       |-- fonts/             -> fonts, images, etc can be put here
       |-- images/            -> these are then available in /public/images/
       |-- scripts/           -> of course you can also embed scripts
+      |-- ...
+  |-- plugins/               -> your custom plugins
+      |-- plugin1.php
+      |-- plugin2.php
       |-- ...
   |-- index.md               -> Website index
   |-- config.json            -> your config json
@@ -111,7 +118,7 @@ Available hooks: (`$config` refers to plugin config, the route config can always
 
 ### Add a plugin:
 
-If you want to add a plugin, use the `define_plugin($name, $methods)` function like this (make sure this file is included in the build process):
+If you want to add a plugin, create a new php file in `/source/plugins`. Use the `define_plugin($name, $methods)` function like this to add a new plugin named `"your-plugin"`:
 
 ```php
 <?php
