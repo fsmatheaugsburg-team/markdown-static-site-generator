@@ -1,6 +1,15 @@
 {
   "routes": {
     "/": {},
+    "/secure/": {
+      "plugin": [
+        {
+          "name": "password",
+          "username": "Peter",
+          "password": "1234"
+        }
+      ]
+    },
     "/blog/": {
       "title": "My Blog - %s",
       "recursive": true,

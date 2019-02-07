@@ -146,29 +146,27 @@ function create_for_path($target_path, $cfg) {
     ];
   }
 
-  // ensure index is added only once to rendered_pages
-  $index_set = false;
-
   // if the plugin wants to generate an index, let it do it's job
-  call_plugin_function($plugins, 'index', [
+  call_plugin_function($plugins, 'after_route', [
     $rendered_pages,
-    function ($content, $title) use ($target_path, $layout, $headers, $index_set) {
-      if (!$index_set) {
-        $rendered_pages[] = [
-          'metadata' => [],
-          'title' => $title,
-          'url' => $target_path . '/index.html',
-          'file' => null,
-          'content' => $content
-        ];
-        $index_set = true;
-      }
-      file_put_contents(
-        in_project_root($target_path . '/index.html'),
-        complete_doc($content, $title, $layout, $headers)
-      );
+    function ($file, $content, $title) use ($target_path, $layout, $headers) {
+      $rendered_pages[] = [
+        'metadata' => [],
+        'title' => $title,
+        'url' => $target_path . '/' . $file,
+        'file' => null,
+        'content' => $content
+      ];
+      $filename = in_project_root($target_path . '/' . $file);
+      file_put_contents($filename, complete_doc($content, $title, $layout, $headers));
+      return $filename;
     },
-    $parse_func
+    $parse_func,
+    function ($file, $content) use ($target_path) {
+      $filename = in_project_root($target_path . '/' . $file);
+      file_put_contents($filename, $content);
+      return $filename;
+    }
   ]);
   return $rendered_pages;
 }

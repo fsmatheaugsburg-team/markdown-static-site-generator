@@ -111,10 +111,11 @@ Available hooks: (`$config` refers to plugin config, the route config can always
  - `before_route($config, $target_path)` called before route is started, here you can modify the route config
  - `before_parse($config, $raw_content, $file, $metadata)` called right before the markdown gets rendered - you can change `$file` to change the target file name.
  - `after_parse($config, $content, $file, $metadata)` called right after the markdown gets rendered - you can change `$file` to change the target file name.
- - `index($config, $pages, $write_to_file, $parse)` to create a generated `index.html` file - called after every file was rendered
+ - `after_route($config, $pages, $write_to_file, $parse)` to create other files like a generated `index.html` file - called after every file was rendered
    - `$pages` contains metadata, title (rendered through template), url, filename and contents (as html).
-   - `$write_to_file($content)` is a funcion that writes the content to the `index.html`
+   - `$write_html_file($file, $content, $title)` is a funcion that writes the content to the specified html file and applies the current layout
    - `$parse($markdown)` renders markdown to html
+   - `$write_file($file, $content)` is a function that writes the content to the specified file
 
 ### Add a plugin:
 

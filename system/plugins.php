@@ -46,7 +46,7 @@ function load_plugins() {
 $PLUGINS = [
   'bloglike' => [
     // generates the file with a list of all blogposts
-    'index' => function ($config, $pages, $write_to_file, $parse) {
+    'after_route' => function ($config, $pages, $write_to_file, $parse) {
       global $CONFIG;
 
       // manage defaults
@@ -165,7 +165,7 @@ $PLUGINS = [
       }
 
       // write index to file
-      $write_to_file($rendered, $config['title']);
+      $write_to_file('index.html', $rendered, $config['title']);
     }
   ]
 ]
