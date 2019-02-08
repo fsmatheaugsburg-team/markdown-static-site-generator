@@ -45,7 +45,7 @@ function create_for_path($target_path, $cfg) {
       if (isset($PLUGINS[$plugin_cfg['name']]))  {
         $plugins[] = [
           "methods" => $PLUGINS[$plugin_cfg['name']],
-          "config" => &$plugin_cfg
+          "config" => $plugin_cfg
         ];
         custom_log("loaded plugin: $plugin_cfg[name]");
       } else {
