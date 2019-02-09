@@ -265,11 +265,11 @@ function build() {
 
   try {
     if (isset($CONFIG['external_plugins']) && $CONFIG['external_plugins']) {
-      custom_log("# Loading Plugins:");
+      custom_log("\n# Loading Plugins:");
       load_plugins();
     }
 
-    custom_log("# Rendering:");
+    custom_log("\n# Rendering:");
     $rendered_pages = [];
     foreach ($CONFIG['routes'] as $target_path => $cfg) {
       $rendered_pages = array_merge($rendered_pages, create_for_path($target_path, $cfg));
@@ -300,15 +300,24 @@ function build() {
     custom_log("# Caught error: " . $e->getMessage());
     custom_log($e->getTraceAsString());
   }
-
+  flush_log();
 }
+
+$LOG = "";
 
 /*
  *  logs the given message according to log-level (todo: implement!);
  *
  */
 function custom_log($msg) {
-  echo $msg . "\n";
+  global $LOG;
+  $LOG .= $msg . "\n";
+}
+
+function flush_log() {
+  global $Parsedown, $LOG;
+  echo $Parsedown->text($LOG);
+  $LOG = "";
 }
 
 if (isset($_GET['build'])) {
