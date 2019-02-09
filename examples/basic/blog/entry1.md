@@ -1,5 +1,7 @@
-~title: example blog entry
-~date: 28.01.2019
+---
+title: example blog entry
+date: 28.01.2019
+---
 
 # This is an example blogpost
 

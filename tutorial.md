@@ -102,16 +102,18 @@ You can specify a template from which titles will be derived globally, and for s
 You can specify any number of attributes in each markdown file like this:
 
 ```markdown
-~title: test title
-~date: 02.11.2019
-~tags: Programming, Tutorial, Documentation
+---
+title: test title
+date: 02.11.2019
+tags: Programming, Tutorial, Documentation
+---
 
 # hello world
 
 Lorem ipsum dolor...
 ```
 
-The metadata will be read out, and removed from the markdown before render. Metadata is also passed on to plugins, but that will be coveref later on.
+The metadata will be read out, and removed from the markdown before render. Metadata is also passed on to plugins, but that will be covered later on.
 
 ## Adding auth keys to your application and automating the build process
 

@@ -197,10 +197,18 @@ function extract_title($metadata, $raw_content) {
  */
 function extract_metadata($raw_content, &$metadata) {
   $metadata = [];
+  if (!preg_match("/^---\s*\n/", $raw_content)) {
+    return $raw_content;
+  }
+  $raw_content = substr($raw_content, strpos($raw_content, "\n") + 1);
 
-  while (strlen($raw_content) > 1 && $raw_content[0] == '~') {
+  while (strlen($raw_content) > 1) {
     $metadata_line = substr($raw_content, 0, strpos($raw_content, "\n"));
-    preg_match("/~([^:]+):\s?([^\n]+)/", $metadata_line, $matches);
+    if (preg_match("/^---\s*/", $metadata_line)) {
+      $raw_content = substr($raw_content, strpos($raw_content, "\n") + 1);
+      break;
+    }
+    preg_match("/^([^:]+):\s?([^\n]+)/", $metadata_line, $matches);
     $metadata[$matches[1]] = $matches[2];
     $raw_content = substr($raw_content, strpos($raw_content, "\n") + 1);
   }

@@ -1,5 +1,7 @@
-~date: 04.02.2019
-~title: recursive test
+---
+date: 04.02.2019
+title: recursive test
+---
 
 # Hello world
 
