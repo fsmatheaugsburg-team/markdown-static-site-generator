@@ -4,6 +4,8 @@
  *  if called with ?build it will start a build (if authenticated)
  *
  */
+
+require_once(__DIR__.'/vendor/autoload.php');
 require_once('config.php');
 require_once('auth.php');
 require_once('complete_doc.php');
@@ -11,6 +13,7 @@ require_once('date_time.php');
 require_once('plugins.php');
 require_once('Parsedown.php');
 require_once('sitemap.php');
+require_once('dropbox.php');
 
 $Parsedown = new Parsedown();
 
@@ -178,7 +181,7 @@ function create_title($template, $title) {
 }
 
 /**
- *  Extsract title from file
+ *  Extract title from file
  *  first looks for a title in the metadata
  *  if nothing was found, return the first heading
  */
@@ -264,6 +267,15 @@ function build() {
   global $CONFIG;
 
   try {
+    custom_log("\n# Syncing files from Dropbox");
+    syncFromDropbox(
+      $CONFIG['dropbox']['clientId'],
+      $CONFIG['dropbox']['clientSecret'],
+      $CONFIG['dropbox']['accessToken'],
+      $CONFIG['dropbox']['rootFolder'],
+      realpath("../source/")."/"
+    );
+
     if (isset($CONFIG['external_plugins']) && $CONFIG['external_plugins']) {
       custom_log("\n# Loading Plugins:");
       load_plugins();

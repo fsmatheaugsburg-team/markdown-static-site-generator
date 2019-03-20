@@ -6,8 +6,8 @@
  */
 
 // load config.json, set some flags
-if (file_exists("../source/config.json")) {
-  $CONFIG = json_decode(file_get_contents("../source/config.json"), true);
+if (file_exists("../config/config.json")) {
+  $CONFIG = json_decode(file_get_contents("../config/config.json"), true);
   if ($CONFIG == null) throw new Error("Invalid JSON config! " + json_last_error_msg());
   define('NO_CONFIG', false);
 } else {
@@ -15,8 +15,7 @@ if (file_exists("../source/config.json")) {
   $CONFIG = [
     "routes" => []
   ];
-}
-
+} 
 // configure defaults:
 // formatting
 if (!isset($CONFIG['formatting'])) {
@@ -45,6 +44,7 @@ if (!isset($CONFIG['layout'])) {
 if (!isset($CONFIG['title'])) {
   $CONFIG['title'] = '%s';
 }
+
 // make sure global headers are an array
 if (isset($CONFIG['headers'])) {
   if (!is_array($CONFIG['headers'])) $CONFIG['headers'] = [$CONFIG['headers']];
