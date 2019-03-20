@@ -42,6 +42,15 @@ Things that are not implemented yet, but will be included at some point...
         "datetime": "d.m.Y - H:i"
     }
     ```
+ - `dropbox`: 
+    ```
+    "dropbox": {
+      "clientId": "xxxxxxxxxxxxxxx",
+      "clientSecret": "xxxxxxxxxxxxxxx",
+      "accessToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "rootFolder": "/Daten - Fachschaft Mathe/Website/koma84/"
+    }
+    ```
 
 ## Example projects
 
