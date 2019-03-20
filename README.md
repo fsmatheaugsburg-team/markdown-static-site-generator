@@ -17,7 +17,7 @@ Things that are not implemented yet, but will be included at some point...
  - [x] generate sitemap for search-engines
  - [x] enable recursive routes (i.e. apply this route to every sub-folder as well)
 
-## `config.json` format
+## `/config/config.json` format
 
  - `routes` define all your routes, keys are absolute paths (on the target blog), settings are:
    - `use: "/path"` the folder containing the markdown files (relative to the `/source` directory). Default is the target path (this objects key). All markdown files in this directory will be rendered to HTML and made public (except `README.md`).
