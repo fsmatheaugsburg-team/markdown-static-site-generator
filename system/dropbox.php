@@ -60,30 +60,14 @@
         }
       }
     );
+  }
 
-    $existingFilenames = $items->map(
-      function ($item, $key) {
-        return $item->getName();
-      }
-    )->toArray();
-
-    $toBeDeleted = array_map(
-      function ($filename) use ($targetRootFolder, $targetFolder) {
-        return $targetRootFolder.$targetFolder.$filename;
-      },
-      array_diff(
-        scandir($targetRootFolder.$targetFolder),
-        array_merge($existingFilenames, array('..', '.'))
-      )
-    );
+  function deleteRemovedFiles($targetRootFolder, $oldRevisions, $newRevisions) {
+    $toBeDeleted = array_diff(array_keys($oldRevisions), array_keys($newRevisions));
 
     array_map(
-      function ($filepath) {
-        if(is_dir($filepath)) {
-          rmdir($filepath);
-        } else {
-          unlink($filepath);
-        }
+      function ($filepath) use ($targetRootFolder) {
+          unlink($targetRootFolder.$filepath);
       },
       $toBeDeleted
     );
@@ -104,6 +88,7 @@
     $newRevisions = array();
 
     syncDropboxFolder($dropbox, $sourceFolder, $targetRootFolder, "", $oldRevisions, $newRevisions);
+    deleteRemovedFiles($targetRootFolder, $oldRevisions, $newRevisions);
 
     file_put_contents($revisionsFile, json_encode($newRevisions));
   }

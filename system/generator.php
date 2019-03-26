@@ -5,7 +5,6 @@
  *
  */
 
-require_once(__DIR__.'/vendor/autoload.php');
 require_once('config.php');
 require_once('auth.php');
 require_once('complete_doc.php');
@@ -268,11 +267,19 @@ function build() {
 
   try {
     custom_log("\n# Syncing files from Dropbox");
+
+    $dropboxLoginFile = realpath("../source/")."/.dropbox-login.json";
+    if(file_exists($dropboxLoginFile)) {
+      $dropboxConfig = json_decode(file_get_contents($dropboxLoginFile), true);
+    } else {
+      throw new Exception("Please provide a `source/.dropbox-login.json`-File to sync the source!");
+    }
+
     syncFromDropbox(
-      $CONFIG['dropbox']['clientId'],
-      $CONFIG['dropbox']['clientSecret'],
-      $CONFIG['dropbox']['accessToken'],
-      $CONFIG['dropbox']['rootFolder'],
+      $dropboxConfig['clientId'],
+      $dropboxConfig['clientSecret'],
+      $dropboxConfig['accessToken'],
+      $dropboxConfig['rootFolder'],
       realpath("../source/")."/"
     );
 
