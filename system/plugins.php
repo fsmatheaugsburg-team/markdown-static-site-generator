@@ -82,7 +82,7 @@ $PLUGINS = [
         $dict = array_merge(default_dict([
           'index' => sizeof($pages) - $index,
           'preview' => substr(simplify_text(strip_tags($post['content'])), 0, $config['previewlen']) . '...',
-          'url' => in_project_root($post['url'])
+          'url' => get_webroot_offset() . $post['url']
         ], 0), $metadata);
 
         // put article in the list
