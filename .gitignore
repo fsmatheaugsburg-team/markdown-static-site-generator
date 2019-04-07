@@ -1,4 +1,13 @@
-/config/
-/source/
-/blog/
-/css/
+*
+
+!.gitignore
+!Dockerfile
+!README.md
+!start-script.sh
+!tutorial.md
+
+!system/
+!system/**
+
+!examples/
+!examples/**

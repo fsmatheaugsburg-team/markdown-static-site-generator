@@ -1,8 +1,12 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 /**
  *  This is the main file, it holds most of the generating logic
  *  if called with ?build it will start a build (if authenticated)
- *
  */
 
 require_once('config.php');
@@ -13,6 +17,19 @@ require_once('plugins.php');
 require_once('Parsedown.php');
 require_once('sitemap.php');
 require_once('dropbox.php');
+
+function downloadFile($source, $target) {
+  $data = file_get_contents($source);
+  $directory = dirname($target);
+
+  if (!file_exists($directory)) {
+    mkdir($directory, 0777, true);
+  }
+
+  $file = fopen($target, "w+");
+  fputs($file, $data);
+  fclose($file);
+}
 
 $Parsedown = new Parsedown();
 
@@ -151,11 +168,31 @@ function create_for_path($target_path, $cfg) {
   // if the plugin wants to generate an index, let it do it's job
   call_plugin_function($plugins, 'after_route', [
     $rendered_pages,
-    function ($file, $content, $title) use ($target_path, $layout, $headers) {
+    function ($file, $content, $title, $appendToOriginalContent = false) use ($target_path, $layout, $headers, $rendered_pages) {
+      $url = $target_path . $file;
+      if ($appendToOriginalContent) {
+        $contentFromPagesWithSameName = implode(
+          "\n\n",
+          array_map(
+            function ($page) {
+              return $page["content"];
+            },
+            array_filter(
+              $rendered_pages,
+              function ($page) use ($target_path, $file, $url) {
+                return $page["url"] == $url;
+              }
+            )
+          )
+        );
+
+        $content = $contentFromPagesWithSameName . "\n\n" . $content;
+      }
+
       $rendered_pages[] = [
         'metadata' => [],
         'title' => $title,
-        'url' => $target_path . '/' . $file,
+        'url' => $url,
         'file' => null,
         'content' => $content
       ];
@@ -281,6 +318,15 @@ function build() {
       $dropboxConfig['accessToken'],
       $dropboxConfig['rootFolder'],
       realpath("../source/")."/"
+    );
+
+    custom_log("\n# Fetching additional files");
+    array_map(
+      function ($object) {
+        custom_log("\nDownloading \"".$object["source"]."\" to \"".$object["target"]."\"");
+        downloadFile($object["source"], realpath("../source/").$object["target"]);
+      },
+      $CONFIG["fetch"]
     );
 
     if (isset($CONFIG['external_plugins']) && $CONFIG['external_plugins']) {
