@@ -308,17 +308,17 @@ function build() {
     $dropboxLoginFile = realpath("../source/")."/.dropbox-login.json";
     if(file_exists($dropboxLoginFile)) {
       $dropboxConfig = json_decode(file_get_contents($dropboxLoginFile), true);
-    } else {
-      throw new Exception("Please provide a `source/.dropbox-login.json`-File to sync the source!");
-    }
 
-    syncFromDropbox(
-      $dropboxConfig['clientId'],
-      $dropboxConfig['clientSecret'],
-      $dropboxConfig['accessToken'],
-      $dropboxConfig['rootFolder'],
-      realpath("../source/")."/"
-    );
+      syncFromDropbox(
+        $dropboxConfig['clientId'],
+        $dropboxConfig['clientSecret'],
+        $dropboxConfig['accessToken'],
+        $dropboxConfig['rootFolder'],
+        realpath("../source/")."/"
+      );
+    } else {
+      custom_log("\"".$dropboxLoginFile."\" does not exist, so Dropbox-Sync was skipped.");
+    }
 
     custom_log("\n# Fetching additional files");
     array_map(

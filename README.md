@@ -32,7 +32,7 @@ Things that are not implemented yet, but will be included at some point...
  - `title: "template string %s"` specify a global title template  (gets overwritten by route-specific configurations)
  - `themes: ["theme1", "theme2", ...]` list of theme names
  - `headers: "<header tag>" | [header tags]` Tags to append to your html `<head>`
- - `authkeys: ["key1", "key2", ...]` list of authentication keys. When set, building requires authentication with one of these keys.
+ - `authtokens: ["key1", "key2", ...]` list of authentication keys. When set, building requires authentication with one of these keys.
  - `external_plugins: true|false` Use custom plugins defined in the `/source/plugins` folder
  - `formatting: {date: <php date formattin>, time: <format>, datetime: <format>}` define formatting for displaying and parsing dates. Default is
    ```
@@ -42,15 +42,23 @@ Things that are not implemented yet, but will be included at some point...
         "datetime": "d.m.Y - H:i"
     }
     ```
- - `dropbox`: 
-    ```
-    "dropbox": {
-      "clientId": "xxxxxxxxxxxxxxx",
-      "clientSecret": "xxxxxxxxxxxxxxx",
-      "accessToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "rootFolder": "/Daten - Fachschaft Mathe/Website/koma84/"
-    }
-    ```
+ - `fetch`: An array of pairs of urls and locations in the filesystem of files that have to be downloaded from the Web before the build starts. An example element of the array looks like `{ "source": "https:/example.org/file.zip", "target": "public/downloads/file.zip" }`
+
+## Dropbox Sync
+
+To activate a Sync from a Dropbox folder, create the JSON-File `source/.dropbox-login.json` with a content in the following format:
+```
+{
+  "clientId": "xxxxxxxxxxxxxxx",
+  "clientSecret": "xxxxxxxxxxxxxxx",
+  "accessToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "rootFolder": "/Daten - Fachschaft Mathe/Website/koma84/"
+}
+```
+
+* Before every build, the complete content of the Dropbox-folder specified will be downloaded.
+* Files that were synced from Dropbox will be deleted as soon as they are deleted in the Dropbox.
+* If `source/.dropbox-login.json` does not exist, this step will be skipped.
 
 ## Example projects
 
@@ -142,3 +150,31 @@ define_plugin("your-plugin", [
 ```
 
 And in your `config.json` add `"plugin": {"name": "your-plugin"}` for a specific route. This will append `<strong>custom plugin footer</strong>` to every page on that route.
+
+### The Calendar-Plugin:
+
+The `calendar`-Plugin can be configured with the following JSON-object.
+```
+"plugin": {
+  /* The name of the Calendar Plugin */
+  "name": "calendar",
+  /* The Title displayed at the title page */
+  "title": "Programm",
+  /* Forces the usage of the timezone instead of UTC (optional) */
+  "forceTimeZone": true,
+  /* The time starting from today displayed on the event page (optional) */
+  "mainPageInterval": "P6M",
+  /* The template for a date in the event lists (optional) */
+  "contentPreviewDay": "## {{date}}\n{{renderedEvents}}\n",
+  /* The template for an event in the event lists (optional) */
+  "contentPreviewEvent": " * **{{startTime}}** [{{summary}}]({{filename}}.html)  \n",
+  /* The template of the event page (optional) */
+  "contentEventPage": "# {{summary}}\n\n*Start:* {{startDate}} {{startTime}}  \n*Ende:* {{endDate}} {{endTime}}  \n*Ort:* {{location}}\n\n{{description}}\n",
+  /* The timezone used for the time of the events (optional) */
+  "defaultTimeZone": "DE"
+}
+```
+
+* The calendar plugin generated an `index.html` with the upcoming events, an `all.html` with all events in chronological order, and an own page for every event in the calendar.
+* If there exists an `index.md` in the used folder, its contents are displayed before the calendar listing.
+
