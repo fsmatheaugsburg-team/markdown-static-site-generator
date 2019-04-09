@@ -177,7 +177,7 @@ $PLUGINS = [
       if (!isset($config['forceTimeZone'])) $config['forceTimeZone'] = true;
       if (!isset($config['mainPageInterval'])) $config['mainPageInterval'] = "P6M";
       if (!isset($config['contentPreviewDay'])) $config['contentPreviewDay'] = "## {{date}}\n{{renderedEvents}}\n";
-      if (!isset($config['contentPreviewEvent'])) $config['contentPreviewEvent'] = " * **{{startTime}}** [{{summary}}]({{filename}}.html)  \n";
+      if (!isset($config['contentPreviewEvent'])) $config['contentPreviewEvent'] = " * **{{startTime}}** [{{summary}}]({{filename}}.html) *{{location}}*  \n";
       if (!isset($config['contentEventPage'])) $config['contentEventPage'] = "# {{summary}}\n\n*Start:* {{startDate}} {{startTime}}  \n*Ende:* {{endDate}} {{endTime}}  \n*Ort:* {{location}}\n\n{{description}}\n";
       if (!isset($config['defaultTimeZone'])) $config['defaultTimeZone'] = "DE";
 
