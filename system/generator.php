@@ -30,6 +30,7 @@ function create_for_path($target_path, $cfg) {
   // defaults
   if (!isset($cfg['use'])) $cfg['use'] = $target_path;
   if (!isset($cfg['title'])) $cfg['title'] = $CONFIG['title'];
+  $cfg['url'] = $target_path;
 
   custom_log("\n## Rendering contents of $cfg[use]");
 

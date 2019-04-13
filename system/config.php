@@ -80,4 +80,12 @@ function get_webroot_offset() {
   return substr($proj_root, strlen($web_root));
 }
 
+function absolute_url($link = '') {
+  $hostname = $_SERVER['HTTP_HOST'];
+  $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+  $webroot_offset = get_webroot_offset();
+
+  return "${protocol}${hostname}${webroot_offset}$link";
+}
+
 ?>

@@ -46,7 +46,7 @@ function load_plugins() {
 $PLUGINS = [
   'bloglike' => [
     // generates the file with a list of all blogposts
-    'after_route' => function ($config, $pages, $write_to_file, $parse) {
+    'after_route' => function ($config, $pages, $write_to_file, $parse, $write_raw) {
       global $CONFIG;
 
       // manage defaults
@@ -87,6 +87,7 @@ $PLUGINS = [
 
         // put article in the list
         $articles[] = [
+          'metadata' => $dict,
           'content' => "\n" . fill_template_string_dict($article_layout, $dict) . "\n",
           'date' => $timestamp
         ];
@@ -103,6 +104,7 @@ $PLUGINS = [
       foreach($articles as $page) {
         $markdown .= $page['content'];
       }
+      $markdown .= "\n\n[rss](" . get_webroot_offset() . $config['..']['url'] . 'feed.rss)';
 
       $rendered = $parse($markdown);
 
@@ -166,6 +168,24 @@ $PLUGINS = [
 
       // write index to file
       $write_to_file('index.html', $rendered, $config['title']);
+
+      $rss_rendered = '<?xml version="1.0" encoding="UTF-8"?>';
+      $rss_rendered .= '<rss version="2.0"><channel>';
+      $rss_rendered .= '<title>'. $config['title'] .'</title>';
+      $rss_rendered .= '<link>' . absolute_url($config['..']['url']) . '</link>';
+      foreach ($articles as $page) {
+
+        $rss_rendered .= '<item>';
+        $rss_rendered .= '<title>'. $page['metadata']['title'] .'</title>';
+        $rss_rendered .= '<link>' . absolute_url($page['metadata']['url']) . '</link>';
+        $rss_rendered .= '<guid>' . absolute_url($page['metadata']['url']) . '</guid>';
+        $rss_rendered .= '<description>' . $page['metadata']['preview'] . '</description>';
+        $rss_rendered .= '<pubDate>' . date(DATE_RSS, $page['date']) . '</pubDate>';
+        $rss_rendered .= '</item>';
+      }
+      $rss_rendered .= '</channel></rss>';
+
+      $write_raw('feed.rss', $rss_rendered);
     }
   ]
 ]
