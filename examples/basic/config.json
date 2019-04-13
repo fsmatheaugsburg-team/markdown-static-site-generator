@@ -15,7 +15,8 @@
       "recursive": true,
       "plugin": [
         {
-          "name": "bloglike"
+          "name": "bloglike",
+          "rss": true
         },
         {
           "name": "mathjax"
