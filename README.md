@@ -25,7 +25,6 @@ Things that are not implemented yet, but will be included at some point...
    - `css: "/path/to/css" | [paths]` additional css files to be included (either a string, or array of strings). Paths are relative to the css directory `/css`
    - `layout: "layout.html"` Use a special template for this route. Relative to the `/source` directory
    - `recursive: true|false` apply route to all subfolders as well (see "basic" example)
-   - `protection: {<type>: <config>}` specify a protection mechanism. e.g. `password: "123456"` or `ip: {"220.248.0.0/14": "block", "65.19.146": "block"}` (block chinese ip addresses) (not implemented yet)
    - `plugin: {name: "name", <additional config>}`, you can also supply an array or plugin configs.
    - `headers: "<header tag>" | [header tags]` Additional header elements
  - `layout: "layout.html"`
@@ -124,6 +123,7 @@ You can omit the system line if you don't plan on changin anything with the syst
 
 ## Plugins
 
+
 Available hooks: (`$config` refers to plugin config, the route config can always be found in `$config['..']`)
  - `before_route($config, $target_path)` called before route is started, here you can modify the route config
  - `before_parse($config, $raw_content, $file, $metadata)` called right before the markdown gets rendered - you can change `$file` to change the target file name.
@@ -150,31 +150,3 @@ define_plugin("your-plugin", [
 ```
 
 And in your `config.json` add `"plugin": {"name": "your-plugin"}` for a specific route. This will append `<strong>custom plugin footer</strong>` to every page on that route.
-
-### The Calendar-Plugin:
-
-The `calendar`-Plugin can be configured with the following JSON-object.
-```
-"plugin": {
-  /* The name of the Calendar Plugin */
-  "name": "calendar",
-  /* The Title displayed at the title page */
-  "title": "Programm",
-  /* Forces the usage of the timezone instead of UTC (optional) */
-  "forceTimeZone": true,
-  /* The time starting from today displayed on the event page (optional) */
-  "mainPageInterval": "P6M",
-  /* The template for a date in the event lists (optional) */
-  "contentPreviewDay": "## {{date}}\n{{renderedEvents}}\n",
-  /* The template for an event in the event lists (optional) */
-  "contentPreviewEvent": " * **{{startTime}}** [{{summary}}]({{filename}}.html)  \n",
-  /* The template of the event page (optional) */
-  "contentEventPage": "# {{summary}}\n\n*Start:* {{startDate}} {{startTime}}  \n*Ende:* {{endDate}} {{endTime}}  \n*Ort:* {{location}}\n\n{{description}}\n",
-  /* The timezone used for the time of the events (optional) */
-  "defaultTimeZone": "DE"
-}
-```
-
-* The calendar plugin generated an `index.html` with the upcoming events, an `all.html` with all events in chronological order, and an own page for every event in the calendar.
-* If there exists an `index.md` in the used folder, its contents are displayed before the calendar listing.
-

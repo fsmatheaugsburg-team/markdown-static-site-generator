@@ -1,4 +1,4 @@
-<?php error_reporting(E_ERROR | E_PARSE);
+<?php
 /**
  *  This file handles loading the config and setting up defaults
  *  it also provides some handy functions to get relative paths in project root
@@ -15,7 +15,7 @@ if (file_exists("../source/config.json")) {
   $CONFIG = [
     "routes" => []
   ];
-} 
+}
 // configure defaults:
 // formatting
 if (!isset($CONFIG['formatting'])) {
@@ -34,6 +34,11 @@ if (!isset($CONFIG['formatting']['time'])) {
 }
 if (!isset($CONFIG['formatting']['datetime'])) {
   $CONFIG['formatting']['datetime'] = 'd.m.Y - H:i';
+}
+
+// resources to fetch:
+if (!isset($CONFIG['fetch'])) {
+  $CONFIG['fetch'] = [];
 }
 
 // layout

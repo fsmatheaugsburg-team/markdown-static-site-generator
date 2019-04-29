@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ERROR | E_PARSE);
 
 /**
  *  This is the main file, it holds most of the generating logic
@@ -51,7 +51,7 @@ function create_for_path($target_path, $cfg) {
   if (!isset($cfg['title'])) $cfg['title'] = $CONFIG['title'];
   $cfg['url'] = $target_path;
 
-  custom_log("\n## Rendering contents of $cfg[use]");
+  custom_log("\n## Rendering contents of `$cfg[use]`");
 
   // build plugin library
   $plugins = [];
@@ -60,6 +60,7 @@ function create_for_path($target_path, $cfg) {
     // turn it into an array pf associative arrays
     if (!isset($cfg['plugin'][0])) $cfg['plugin'] = [$cfg['plugin']];
 
+    $log_loaded_plugins = [];
     foreach ($cfg['plugin'] as $plugin_cfg) {
       $plugin_cfg['..'] = &$cfg;
       if (isset($PLUGINS[$plugin_cfg['name']]))  {
@@ -67,11 +68,12 @@ function create_for_path($target_path, $cfg) {
           "methods" => $PLUGINS[$plugin_cfg['name']],
           "config" => $plugin_cfg
         ];
-        custom_log("loaded plugin: $plugin_cfg[name]");
+        $log_loaded_plugins[] = $plugin_cfg['name'];
       } else {
-        custom_log('# Error: Plugin '.$plugin_cfg['name'].' could not be found.');
+        custom_log('**Error: Plugin '.$plugin_cfg['name'].' could not be found!**');
       }
     }
+    custom_log("Using plugns: " . implode(", ", $log_loaded_plugins));
   }
 
   // call before_route
@@ -271,7 +273,7 @@ function link_from_source($name, $absolute = false) {
   $path = $absolute ? $name : in_source_folder($name);
   $target = $absolute ? substr($name, strlen($basepath)) : $name;
 
-  custom_log("linking `$path => $target`");
+  custom_log("* linking `$path => $target`");
 
   if (file_exists($path)) {
     return symlink($path, in_project_root($target));
@@ -330,9 +332,12 @@ function build() {
       $CONFIG["fetch"]
     );
 
+    custom_log("\n# Loading Plugins:");
+    load_plugins(in_project_root('system/plugins'));
+
     if (isset($CONFIG['external_plugins']) && $CONFIG['external_plugins']) {
-      custom_log("\n# Loading Plugins:");
-      load_plugins();
+      custom_log("\n## Loading external plugins");
+      load_plugins(in_source_folder("plugins/"));
     }
 
     custom_log("\n# Rendering:");
@@ -341,13 +346,12 @@ function build() {
       $rendered_pages = array_merge($rendered_pages, create_for_path($target_path, $cfg));
     }
 
-    custom_log("\n# Generating sitemap");
+    custom_log("\n# Miscellaneous:");
     $sitemap = generate_sitemap($rendered_pages);
     file_put_contents(in_project_root('sitemap.xml'), $sitemap);
+    custom_log("\n## Sitemap generated");
 
-    custom_log('```xml' . "\n" . $sitemap . '```');
-
-    custom_log("\n# Linking resources:");
+    custom_log("\n## Linking resources:");
 
     // link the public folder to the source, as we don't want to duplicate potentially larger files
     link_from_source('public');

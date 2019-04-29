@@ -6,7 +6,6 @@ define_plugin('password', [
     $password = crypt($config['password']);
     $content .= $config['username'] . ':' . $password . "\n";
     $htusers = $write_to_file('.htusers', $content);
-    custom_log(".htusers: $htusers");
 
     $write_to_file('.htaccess', 'AuthType Basic
 AuthName "Password"

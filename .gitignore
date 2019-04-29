@@ -2,6 +2,7 @@
 
 !.gitignore
 !Dockerfile
+!plugins.md
 !README.md
 !start-script.sh
 !tutorial.md
@@ -12,3 +13,6 @@
 
 !examples/
 !examples/**
+
+!css/
+!css/**
