@@ -1,21 +1,23 @@
 # Markdown static site generator
 
-This is only the page generator code, the webpage is defined in another repository.
-
 Please refer to [the tutorial](tutorial.md) for more details on usage.
 
-## TODO
 
-Things that are not implemented yet, but will be included at some point...
+## Example projects
 
- - [ ] Enable password / ipbased protection (local and global, ideally) (could be done via plugin?)
- - [ ] global / local blacklist for files (i.e. don't render `README.md` for specific folders);
- - [x] enable user supplied plugins (i.e. load everything in `/source/plugins` as php code)
- - [ ] Tell the browser about themes ([source](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#Providing_alternative_stylesheets))
- - [ ] Implement a way to embed a theme switcher i.e. `{{theme}}=light` which evaluates to `/css/current_theme.php?theme=light`
- - [ ] enable caching (store hashes of already generated files to prevent complete re-render)
- - [x] generate sitemap for search-engines
- - [x] enable recursive routes (i.e. apply this route to every sub-folder as well)
+If you want to start off with a working example project, You can use our provided examples:
+
+All you need to do is upload the contents of these into your `/source` folder and press "build" in your panel.
+
+Example project setups can be found inside the `/example` folder:
+ - `/example/hello-world` The absolute minimum required to get your project going
+ - `/example/basic` A goof starting off point. It has things configured like
+   - The `bloglike` plugin. This enables you to have a blog, or something similar
+   - A custom plugin for enabling LaTeX notation in markdown.
+   - A layout with some CSS (internal + external) to make it look presentable
+   - A favicon and some public folders / images
+
+
 
 ## `/config/config.json` format
 
@@ -58,17 +60,6 @@ To activate a Sync from a Dropbox folder, create the JSON-File `source/.dropbox-
 * Before every build, the complete content of the Dropbox-folder specified will be downloaded.
 * Files that were synced from Dropbox will be deleted as soon as they are deleted in the Dropbox.
 * If `source/.dropbox-login.json` does not exist, this step will be skipped.
-
-## Example projects
-
-Just upload the contents of these into your `/source` folder and press "build" in your panel.
-
-Example project setups can be found inside the `/example` folder:
- - `/example/hello-world` The absolute minimum required to get your project going
- - `/example/basic` A goof starting off point. It has things configured like
-   - The `bloglike` plugin. This enables you to have a blog, or something similar
-   - A layout with some CSS (internal + external) to make it look presentable
-   - A favicon and some public folders / images
 
 
 ## Folder structure
