@@ -389,7 +389,11 @@ function custom_log($msg) {
 
 function flush_log() {
   global $LOG;
-  echo MarkdownExtra::defaultTransform($LOG);
+  if ($_GET['format'] == 'raw') {
+    echo $LOG;
+  } else {
+    echo MarkdownExtra::defaultTransform($LOG);
+  }
   $LOG = "";
 }
 
