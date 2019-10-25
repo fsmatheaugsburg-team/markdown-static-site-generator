@@ -141,3 +141,9 @@ define_plugin("your-plugin", [
 ```
 
 And in your `config.json` add `"plugin": {"name": "your-plugin"}` for a specific route. This will append `<strong>custom plugin footer</strong>` to every page on that route.
+
+## Libraries used
+
+* For parsing markdown we use: [michelf/php-markdown](https://github.com/michelf/php-markdown)
+* Dropbox sync is built with [kunalvarma05/dropbox-php-sdk](https://github.com/kunalvarma05/dropbox-php-sdk) (licensed under MIT)
+* For parsing ICS files (calendar plugin) [johngrogg/ics-parser](https://github.com/u01jmg3/ics-parser) (licensed under MIT)

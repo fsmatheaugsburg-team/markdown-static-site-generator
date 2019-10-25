@@ -14,9 +14,11 @@ require_once('auth.php');
 require_once('complete_doc.php');
 require_once('date_time.php');
 require_once('plugins.php');
-require_once('Parsedown.php');
+require_once('lib/Michelf/MarkdownExtra.inc.php');
 require_once('sitemap.php');
 require_once('dropbox.php');
+
+use Michelf\MarkdownExtra;
 
 function downloadFile($source, $target) {
   $data = file_get_contents($source);
@@ -31,14 +33,14 @@ function downloadFile($source, $target) {
   fclose($file);
 }
 
-$Parsedown = new Parsedown();
+
 
 // build route specified in config.json/routes
 function create_for_path($target_path, $cfg) {
-  global $Parsedown, $CONFIG, $PLUGINS;
+  global $CONFIG, $PLUGINS;
 
   // a function we can pass along to render markdown with our parsedown parser
-  $parse_func = function ($markdown) use ($Parsedown) {return $Parsedown->text($markdown);};
+  $parse_func = function ($markdown) {return MarkdownExtra::defaultTransform($markdown);};
 
 
   // test for illegal paths
@@ -142,7 +144,7 @@ function create_for_path($target_path, $cfg) {
     call_plugin_function($plugins, 'before_parse', $raw_content, $file, $metadata);
 
     // parse markdown
-    $content_body = $Parsedown->text($raw_content);
+    $content_body = MarkdownExtra::defaultTransform($raw_content);
 
     // assemble html file
     $content = complete_doc($content_body, $title, $layout, $headers);
@@ -368,25 +370,26 @@ function build() {
     custom_log(json_encode($CONFIG, JSON_PRETTY_PRINT) . "\n````");
   } catch (Exception | Error $e) {
     custom_log("# Caught error: " . $e->getMessage());
-    custom_log($e->getTraceAsString());
+    custom_log("```" . $e->getTraceAsString() . "```");
   }
   flush_log();
 }
 
-$LOG = "";
 
 /*
  *  logs the given message according to log-level (todo: implement!);
  *
  */
+
+$LOG = "";
 function custom_log($msg) {
   global $LOG;
   $LOG .= $msg . "\n";
 }
 
 function flush_log() {
-  global $Parsedown, $LOG;
-  echo $Parsedown->text($LOG);
+  global $LOG;
+  echo MarkdownExtra::defaultTransform($LOG);
   $LOG = "";
 }
 
