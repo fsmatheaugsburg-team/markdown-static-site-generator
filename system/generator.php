@@ -389,7 +389,9 @@ function custom_log($msg) {
 
 function flush_log() {
   global $LOG;
-  if ($_GET['format'] == 'raw') {
+  $accept_header = getallheaders()['Accept'];
+  $html_accepted = preg_match('/(^|,)\s*text\/html\s*($|,)/', $accept_header);
+  if (!$html_accepted) {
     echo $LOG;
   } else {
     echo MarkdownExtra::defaultTransform($LOG);
