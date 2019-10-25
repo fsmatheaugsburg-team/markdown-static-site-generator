@@ -61,7 +61,7 @@ define_plugin('bloglike', [
 
     if ($config['rss']) {
       // add link to rss feed
-      $markdown .= "\n\n[rss](" . get_webroot_offset() . $config['..']['url'] . 'feed.rss)';
+      $markdown .= "\n\n*[RSS feed](" . get_webroot_offset() . $config['..']['url'] . 'feed.rss)*';
     }
 
     $rendered = $parse($markdown);
@@ -138,7 +138,10 @@ define_plugin('bloglike', [
         $rss_rendered .= '<item>';
         $rss_rendered .= '<title>'. $page['metadata']['title'] .'</title>';
         $rss_rendered .= '<link>' . absolute_url($page['metadata']['url']) . '</link>';
-        $rss_rendered .= '<guid>' . absolute_url($page['metadata']['url']) . '</guid>';
+        $rss_rendered .= '<guid>' . hash('sha256', $config['author'] . absolute_url($page['metadata']['url']) . $page['metadata']['title']) . '</guid>';
+        if (isset($config['author'])) {
+          $rss_rendered .= '<author>' . $config['author'] . '</author>';
+        }
         $rss_rendered .= '<description>' . $page['metadata']['preview'] . '</description>';
         $rss_rendered .= '<pubDate>' . date(DATE_RSS, $page['date']) . '</pubDate>';
         $rss_rendered .= '</item>';
