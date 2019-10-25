@@ -33,7 +33,7 @@
          auth = document.getElementById('auth');
       document.getElementById('build-button').addEventListener('click', () => {
         out.innerText = "Loading...";
-        fetch('generator.php?build', {headers: {Authorization: "Bearer " + encodeURIComponent(auth.value)}}).then(r => r.text()).then(t => out.innerHTML=t);
+        fetch('generator.php?build', {headers: {Authorization: "Bearer " + encodeURIComponent(auth.value), Accept: 'text/html'}}).then(r => r.text()).then(t => out.innerHTML=t);
       })
     </script>
   </body>
